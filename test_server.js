@@ -9,10 +9,11 @@ app.use(express.json())
 
 app.use("*",(req,res)=>{
     console.log("req received")
+    console.log(req.body)
     res.send("hello")
 })
 
-app.listen(5500,()=>{
+app.listen(80,()=>{
 console.log("server listening at port 5500")
 
 })
