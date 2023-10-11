@@ -30,7 +30,7 @@ router.post("/:method",async(req,res)=>{
         }, 2000);
     }else{
         // synchronous
-        insertRequest(response.data)
+        insertRequest(response.data,response.headers)
          res.send(response.data)
     }
     }catch(err){
