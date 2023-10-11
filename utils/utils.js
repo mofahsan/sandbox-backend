@@ -2,12 +2,11 @@ const cache = require("node-cache")
 
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
 
-function  insertRequest(request){
-
+function  insertRequest(request,header){
 let response = myCache.get(request.context.transaction_id)||[]
 const order = response.length >= 1 ? response[response.length-1].order+1 : 1
-
-myCache.set(request.context.transaction_id,[...response,{action: request.context.action,order:order,data:request}],15000)
+const date = new Date()
+myCache.set(request.context.transaction_id,[...response,{action: request.context.action,order:order,header:header?header:null,timestamp:date,data:request}],15000)
 return order
 }
 
