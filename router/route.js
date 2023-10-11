@@ -6,7 +6,6 @@ const axios = require("axios")
 const server_url = process.env.mockUrl
 const {insertRequest,getCache} = require("../utils/utils")
 const asynchronous = process.argv[2]
-console.log(asynchronous)
 
 router.post("/:method",async(req,res)=>{
     try{
@@ -16,7 +15,7 @@ router.post("/:method",async(req,res)=>{
         body.context.bap_uri=`http://127.0.0.1:3000/callback`
 
         const response  =  await axios.post(`${server_url}/${method}`,body)
-        const order = insertRequest(body)
+        const order = insertRequest(body,req.headers)
 
         // if asynchronous
         if(asynchronous){
@@ -31,6 +30,7 @@ router.post("/:method",async(req,res)=>{
         }, 2000);
     }else{
         // synchronous
+        insertRequest(response.data)
          res.send(response.data)
     }
     }catch(err){
