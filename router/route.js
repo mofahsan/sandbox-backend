@@ -12,6 +12,14 @@ if(asynchronous){
     console.log("server will run in synchronous mode")
 }
 
+
+//router.get("*",async(req,res)=>{
+//	console.log(req.url)
+//	res.send("server working")
+
+//})
+
+
 router.post("/:method",async(req,res)=>{
     try{
         const method = req.params.method, body = req.body
