@@ -3,7 +3,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const router = require("express").Router()
 const axios = require("axios")
-const server_url = process.env.mockUrl
+const server_url = process.env.mockUrl ,callbackUrl = process.env.callbackUrl
 const {insertRequest,getCache} = require("../utils/utils")
 const asynchronous = process.argv[2]
 
@@ -12,7 +12,7 @@ router.post("/:method",async(req,res)=>{
         const method = req.params.method, body = req.body
         //change bapuri
         const original_uri = body.context.bap_uri
-        body.context.bap_uri=`http://127.0.0.1:3000/callback`
+        body.context.bap_uri=`${callbackUrl}/callback`
 
         const response  =  await axios.post(`${server_url}/${method}`,body)
         const order = insertRequest(body,req.headers)
@@ -50,7 +50,7 @@ router.get("/cache",async(req,res)=>{
 
 router.post("/callback/:method",(req,res)=>{
     let body = req.body
-     insertRequest(body)
+     insertRequest(body,req.headers)
 })
 
 
