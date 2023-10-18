@@ -6,6 +6,11 @@ const axios = require("axios")
 const server_url = process.env.mockUrl ,callbackUrl = process.env.callbackUrl
 const {insertRequest,getCache} = require("../utils/utils")
 const asynchronous = process.argv[2]
+if(asynchronous){
+    console.log("server running in asynchronous mode")
+}else{
+    console.log("server will run in synchronous mode")
+}
 
 router.post("/:method",async(req,res)=>{
     try{
