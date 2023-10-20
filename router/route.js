@@ -23,11 +23,11 @@ if(asynchronous){
 router.post("/:method",async(req,res)=>{
     try{
         const method = req.params.method, body = req.body
+        const headers = req.headers.authorization?{Authorization:req.headers.authorization}:{}
         //change bapuri
         const original_uri = body.context.bap_uri
         body.context.bap_uri=`${callbackUrl}/callback`
-
-        const response  =  await axios.post(`${server_url}/${method}`,body)
+        const response  =  await axios.post(`${server_url}/${method}`,body,{headers:headers})
         const order = insertRequest(body,req.headers)
 
         // if asynchronous
