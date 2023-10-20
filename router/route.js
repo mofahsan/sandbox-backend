@@ -3,8 +3,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const router = require("express").Router()
 const axios = require("axios")
-const server_url = process.env.mockUrl ,callbackUrl = process.env.callbackUrl
-const {insertRequest,getCache} = require("../utils/utils")
+const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl
+const {insertRequest,getCache,generateHeader} = require("../utils/utils")
 const asynchronous = process.argv[2]
 if(asynchronous){
     console.log("server running in asynchronous mode")
@@ -19,19 +19,39 @@ if(asynchronous){
 
 //})
 
+router.post("/createHeader", async function (req,res) {
+  try {
+    const response = await generateHeader(req.body)
+    res.setHeader("Authorization",response)
+    res.setHeader("Access-Control-Expose-Headers","*")
+      return res.send(req.body)
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("an error occurred")
+   
+  }
+});
 
 router.post("/:method",async(req,res)=>{
     try{
         const method = req.params.method, body = req.body
-        const headers = req.headers.authorization?{Authorization:req.headers.authorization}:{}
+        if(!body?.context?.bap_uri){
+            return res.send("validations failed")
+        }
         //change bapuri
         const original_uri = body.context.bap_uri
         body.context.bap_uri=`${callbackUrl}/callback`
-        const response  =  await axios.post(`${server_url}/${method}`,body,{headers:headers})
-        const order = insertRequest(body,req.headers)
+        const header ={headers:{Authorization:await generateHeader(req.body)}}
+        const response  =  await axios.post(`${mockUrl}/${method}`,body,header)
 
+        if(response.data.message.ack.status=="NACK")return res.send(response.data)
+
+        const order = insertRequest(body,req.headers)
         // if asynchronous
         if(asynchronous){
+            setTimeout(()=>{
+                return res.status(400).send("Request Timed Out")
+            },(15000))
         const interval =  setInterval(() => {
             const data = getCache(body.context.transaction_id)
             const response = data.find((element)=>element.order>order && element.action ==='on_'+method)
@@ -48,6 +68,7 @@ router.post("/:method",async(req,res)=>{
     }
     }catch(err){
         console.log(err)
+        res.send(err.message?err.message:err?.response?.data)
     }
 })
 
