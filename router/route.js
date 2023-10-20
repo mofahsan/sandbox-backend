@@ -49,15 +49,16 @@ router.post("/:method",async(req,res)=>{
         const order = insertRequest(body,req.headers)
         // if asynchronous
         if(asynchronous){
-            setTimeout(()=>{
+           const requestTimeout =  setTimeout(()=>{
                 return res.status(400).send("Request Timed Out")
-            },(15000))
+            },(20000))
         const interval =  setInterval(() => {
             const data = getCache(body.context.transaction_id)
             const response = data.find((element)=>element.order>order && element.action ==='on_'+method)
             if(response){
                 response.data.context.bap_uri = original_uri //replace original uri back
                 clearInterval(interval)
+                clearTimeout(requestTimeout)
                 return res.send(response.data)
             }
         }, 2000);
