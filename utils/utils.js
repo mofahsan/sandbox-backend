@@ -1,4 +1,5 @@
 const cache = require("node-cache")
+const {createAuthorizationHeader} = require("ondc-crypto-sdk-nodejs")
 
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
 
@@ -18,11 +19,19 @@ function getCache(key){
     return myCache.get(key)
 }
 
-const getCallback = () => {
-
-}
+async function generateHeader(message){
+    const result =  await createAuthorizationHeader({
+       message: message,
+       privateKey: process.env.PRIVATE_KEY , //SIGNING private key
+       bapId: process.env.BAPID , // Subscriber ID that you get after registering to ONDC Network
+       bapUniqueKeyId: process.env.UNIQUE_KEY, // Unique Key Id or uKid that you get after registering to ONDC Network
+     })
+     
+     return result
+       
+   }
 
 module.exports = {
-insertRequest,getCache,getCallback
+insertRequest,getCache,generateHeader
 }
 
