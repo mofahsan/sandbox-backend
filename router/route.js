@@ -35,8 +35,8 @@ router.post("/createHeader", async function (req,res) {
 router.post("/:method",async(req,res)=>{
     try{
         const method = req.params.method, body = req.body
-        if(!body?.context?.bap_uri){
-            return res.send("validations failed")
+        if(!body?.context?.bap_uri || !body?.context?.transaction_id){
+            return res.status(400).send("validations failed")
         }
         //change bapuri
         let original_uri = body.context.bap_uri
