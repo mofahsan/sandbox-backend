@@ -39,7 +39,7 @@ router.post("/:method",async(req,res)=>{
             return res.send("validations failed")
         }
         //change bapuri
-        const original_uri = body.context.bap_uri
+        let original_uri = body.context.bap_uri
         body.context.bap_uri=`${callbackUrl}/callback`
         const header ={headers:{Authorization:await generateHeader(req.body)}}
         const response  =  await axios.post(`${mockUrl}/${method}`,body,header)
@@ -49,17 +49,28 @@ router.post("/:method",async(req,res)=>{
         const order = insertRequest(body,req.headers)
         // if asynchronous
         if(asynchronous){
-           const requestTimeout =  setTimeout(()=>{
-                return res.status(400).send("Request Timed Out")
-            },(20000))
-        const interval =  setInterval(() => {
+
+        //    const requestTimeout =  setTimeout(()=>{
+        //         return res.status(400).send("Request Timed Out")
+        //     },(20000))
+
+        const interval =  setInterval(async() => {
             const data = getCache(body.context.transaction_id)
             const response = data.find((element)=>element.order>order && element.action ==='on_'+method)
-            if(response){
+            if(response?.data){
                 response.data.context.bap_uri = original_uri //replace original uri back
                 clearInterval(interval)
-                clearTimeout(requestTimeout)
+                // clearTimeout(requestTimeout)
+                if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
+                    original_uri=original_uri+"/"
+                  }
+                axios.post(`${original_uri}${response.data.context.action}`,response.data,{headers:{Authorization:await generateHeader(response.data)}}).catch((err)=>{ //hit back on original uri
+                    console.log(original_uri+"is incorrect")
+                })
                 return res.send(response.data)
+            }else{
+                clearInterval(interval)
+                return res.send("an error occurred")
             }
         }, 2000);
     }else{
