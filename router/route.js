@@ -32,9 +32,8 @@ router.post("/:method",async(req,res)=>{
         if(!body?.context?.bap_uri || !body?.context?.transaction_id || !body?.context?.bpp_uri && req.params.method !== 'search'  ){
             return res.status(400).send({data:"validations failed bap_uri || transactionid || bppuri missing"})
         }
-        //change bapuri
-        // let original_uri = body.context.bap_uri
-        body.context.bap_uri=`${callbackUrl}/ondc`
+
+        body.context.bap_uri=`${callbackUrl}/ondc/`
         let url ;
 
         if(req.params.method == 'search'){
@@ -42,10 +41,16 @@ router.post("/:method",async(req,res)=>{
         }else{
             url = body.context.bpp_uri
         }
+
+        if(url[url.length-1]!="/"){ //"add / if not exists in bap uri"
+            url=url+"/"
+          }
+
         const header ={headers:{Authorization:await generateHeader(req.body)}}
-        const response  =  await axios.post(`${url}/${method}`,body,header)
 
         insertRequest(body,req.headers)
+        const response  =  await axios.post(`${url}${method}`,body,header)
+
 
         // if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
         //     original_uri=original_uri+"/"
