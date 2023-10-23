@@ -3,14 +3,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const router = require("express").Router()
 const axios = require("axios")
-const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl
+const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl , GATEWAY_URL = process.env.GATEWAY_URL
 const {insertRequest,getCache,generateHeader} = require("../utils/utils")
-const asynchronous = process.argv[2]
-if(asynchronous){
-    console.log("server running in asynchronous mode")
-}else{
-    console.log("server will run in synchronous mode")
-}
 
 
 //router.get("*",async(req,res)=>{
@@ -35,51 +29,35 @@ router.post("/createHeader", async function (req,res) {
 router.post("/:method",async(req,res)=>{
     try{
         const method = req.params.method, body = req.body
-        if(!body?.context?.bap_uri || !body?.context?.transaction_id){
-            return res.status(400).send("validations failed")
+        if(!body?.context?.bap_uri || !body?.context?.transaction_id || !body?.context?.bpp_uri && req.params.method !== 'search'  ){
+            return res.status(400).send({data:"validations failed bap_uri || transactionid || bppuri missing"})
         }
         //change bapuri
-        let original_uri = body.context.bap_uri
-        body.context.bap_uri=`${callbackUrl}/callback`
+        // let original_uri = body.context.bap_uri
+        body.context.bap_uri=`${callbackUrl}/ondc`
+        let url ;
+
+        if(req.params.method == 'search'){
+            url = GATEWAY_URL
+        }else{
+            url = body.context.bpp_uri
+        }
         const header ={headers:{Authorization:await generateHeader(req.body)}}
-        const response  =  await axios.post(`${mockUrl}/${method}`,body,header)
+        const response  =  await axios.post(`${url}/${method}`,body,header)
 
-        if(response.data.message.ack.status=="NACK")return res.send(response.data)
+        insertRequest(body,req.headers)
 
-        const order = insertRequest(body,req.headers)
-        // if asynchronous
-        if(asynchronous){
+        // if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
+        //     original_uri=original_uri+"/"
+        //   }
+        // axios.post(`${original_uri}${response.data.context.action}`,response.data,{headers:{Authorization:await generateHeader(response.data)}}).catch((err)=>{ //hit back on original uri
+        //     console.log(original_uri+"is incorrect")
+        // })
 
-        //    const requestTimeout =  setTimeout(()=>{
-        //         return res.status(400).send("Request Timed Out")
-        //     },(20000))
+        res.status(response.status).send(response.data)
 
-        const interval =  setInterval(async() => {
-            const data = getCache(body.context.transaction_id)
-            const response = data.find((element)=>element.order>order && element.action ==='on_'+method)
-            if(response?.data){
-                response.data.context.bap_uri = original_uri //replace original uri back
-                clearInterval(interval)
-                // clearTimeout(requestTimeout)
-                if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
-                    original_uri=original_uri+"/"
-                  }
-                axios.post(`${original_uri}${response.data.context.action}`,response.data,{headers:{Authorization:await generateHeader(response.data)}}).catch((err)=>{ //hit back on original uri
-                    console.log(original_uri+"is incorrect")
-                })
-                return res.send(response.data)
-            }else{
-                clearInterval(interval)
-                return res.send("an error occurred")
-            }
-        }, 2000);
-    }else{
-        // synchronous
-        insertRequest(response.data,response.headers)
-         res.send(response.data)
-    }
+
     }catch(err){
-        console.log(err)
         res.send(err.message?err.message:err?.response?.data)
     }
 })
@@ -94,8 +72,8 @@ router.get("/cache",async(req,res)=>{
     }
 })
 
-router.post("/callback/:method",(req,res)=>{
-    let body = req.body
+router.post("/ondc/:method",(req,res)=>{
+     let body = req.body
      insertRequest(body,req.headers)
 })
 
