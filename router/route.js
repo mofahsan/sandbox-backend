@@ -50,7 +50,7 @@ router.post("/:method",async(req,res)=>{
 
         insertRequest(body,req.headers)
         const response  =  await axios.post(`${url}${method}`,body,header)
-
+        
 
         // if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
         //     original_uri=original_uri+"/"
@@ -63,7 +63,7 @@ router.post("/:method",async(req,res)=>{
 
 
     }catch(err){
-        res.send(err.message?err.message:err?.response?.data)
+        res.status(err?.response?.status || 500).send(err?.response?.data ? err?.response?.data :err.message)
     }
 })
 
