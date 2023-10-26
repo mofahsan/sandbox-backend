@@ -4,7 +4,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const router = require("express").Router()
 const axios = require("axios")
 const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl , GATEWAY_URL = process.env.GATEWAY_URL
-const {insertRequest,getCache,generateHeader} = require("../utils/utils")
+const {insertRequest,getCache,generateHeader,deleteCache} = require("../utils/utils")
 
 
 //router.get("*",async(req,res)=>{
@@ -82,5 +82,23 @@ router.post("/ondc/:method",(req,res)=>{
      insertRequest(body,req.headers)
 })
 
+
+router.delete("/cache",(req,res)=>{
+    try {
+        const transactionId = req.query.transactionid;
+        console.log("83",transactionId)
+        const deleted = deleteCache(transactionId);
+        if (deleted) {
+            console.log("87",transactionId)
+
+            res.send({ message: 'Response data for the transaction ID has been deleted' });
+        } else {
+            res.send({ message: 'TransactionId not found in cache' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
+})
 
 module.exports = router

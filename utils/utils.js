@@ -31,7 +31,12 @@ async function generateHeader(message){
        
    }
 
+   function deleteCache(transactionId) {
+    return myCache.set(transactionId,[],15000)
+}
+
+
 module.exports = {
-insertRequest,getCache,generateHeader
+insertRequest,getCache,generateHeader,deleteCache
 }
 
