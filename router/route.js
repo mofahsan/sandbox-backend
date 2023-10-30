@@ -80,6 +80,18 @@ router.get("/cache",async(req,res)=>{
 router.post("/ondc/:method",(req,res)=>{
      let body = req.body
      insertRequest(body,req.headers)
+         const ack = {
+        "message": {
+            "ack": {
+                "status": "ACK"
+            }
+        }
+    };
+  res.status(200).json(ack);
+	console.log(req.body.context,"recieved context")
+	console.log(ack,"response")
+    
+
 })
 
 
