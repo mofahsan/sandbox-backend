@@ -80,7 +80,7 @@ router.get("/cache",async(req,res)=>{
 router.post("/ondc/:method", async (req, res) => {
   let body = req.body;
 
-  if (process.env.ENABLE_SIGNATURE_VALIDATION) {
+  if (process.env.ENABLE_SIGNATURE_VALIDATION === "true") {
     const isValid = await verifyHeader(req, process.env.LOOKUP_URL)
     if (isValid){ 
         insertRequest(body, req.headers);
