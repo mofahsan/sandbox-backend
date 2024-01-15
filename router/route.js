@@ -4,7 +4,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const router = require("express").Router()
 const axios = require("axios")
 const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl , GATEWAY_URL = process.env.GATEWAY_URL
-const {insertRequest,getCache,generateHeader,deleteCache} = require("../utils/utils")
+const {insertRequest,getCache,generateHeader,deleteCache,verifyHeader} = require("../utils/utils")
 
 
 //router.get("*",async(req,res)=>{
@@ -77,22 +77,48 @@ router.get("/cache",async(req,res)=>{
     }
 })
 
-router.post("/ondc/:method",(req,res)=>{
-     let body = req.body
-     insertRequest(body,req.headers)
-         const ack = {
-        "message": {
-            "ack": {
-                "status": "ACK"
-            }
-        }
-    };
-  res.status(200).json(ack);
-	console.log(req.body.context,"recieved context")
-	console.log(ack,"response")
-    
+router.post("/ondc/:method", async (req, res) => {
+  let body = req.body;
 
-})
+  if (process.env.ENABLE_SIGNATURE_VALIDATION) {
+    const isValid = await verifyHeader(req, process.env.LOOKUP_URL)
+    if (isValid){ 
+        insertRequest(body, req.headers);
+        const ack = {
+          message: {
+            ack: {
+              status: "ACK",
+            },
+          },
+        };
+        res.status(200).json(ack);
+        console.log(req.body.context, "recieved context");
+        console.log(ack, "response");
+    } else {
+        const nack = {
+            message: {
+              ack: {
+                status: "NACK",
+              },
+            },
+          };
+          res.status(400).json(nack);
+      
+    }
+  } else {
+    insertRequest(body, req.headers);
+    const ack = {
+      message: {
+        ack: {
+          status: "ACK",
+        },
+      },
+    };
+    res.status(200).json(ack);
+    console.log(req.body.context, "recieved context");
+    console.log(ack, "response");
+  }
+});
 
 
 router.delete("/cache",(req,res)=>{
