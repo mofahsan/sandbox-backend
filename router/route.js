@@ -1,10 +1,20 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-
+const fs = require("fs");
+const path = require("path")
+const yaml = require("js-yaml");
 const router = require("express").Router()
 const axios = require("axios")
 const mockUrl = process.env.mockUrl ,callbackUrl = process.env.callbackUrl , GATEWAY_URL = process.env.GATEWAY_URL
-const {insertRequest,getCache,generateHeader,deleteCache,verifyHeader} = require("../utils/utils")
+const {
+  insertRequest,
+  getCache,
+  generateHeader,
+  deleteCache,
+  verifyHeader,
+  insertSession,
+} = require("../utils/utils");
+const {createBecknObject, extractBusinessData} = require('../utils/buildPayload')
 
 
 //router.get("*",async(req,res)=>{
@@ -138,5 +148,115 @@ router.delete("/cache",(req,res)=>{
         res.status(500).send('Internal Server Error');
     }
 })
+
+// JSON mapper
+
+router.post("/mapper/session", (req, res) => {
+  const {
+    bap_id,
+    bap_uri,
+    domain,
+    ttl,
+    version,
+    country,
+    city,
+    cityCode,
+    transaction_id,
+  } = req.body;
+
+  console.log("req", req.body)
+
+  if (
+    !bap_id ||
+    !bap_uri ||
+    !domain ||
+    !ttl ||
+    !version ||
+    !country ||
+    !city ||
+    !cityCode ||
+    !transaction_id
+  ) {
+    return res.status(400).send({
+      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || city || cityCode || transaction_id missing",
+    });
+  }
+
+  try {
+    const protocolCalls = fs.readFileSync(
+      path.join(__dirname, "../", "configs", "protocolCalls.yaml"),
+      "utf8"
+    );
+    const parsedProtocolCalls = yaml.load(protocolCalls);
+
+    const input = fs.readFileSync(
+      path.join(__dirname, "../", "configs", "input.yaml"),
+      "utf8"
+    );
+    const parsedInput = yaml.load(input);
+
+    const session = {
+      ...req.body,
+      input: parsedInput,
+      protocolCalls: parsedProtocolCalls,
+    };
+
+    insertSession(session);
+    res.send({ sucess: true, data: session });
+  } catch (e) {
+    console.log("Error while creating session", e);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.post("/mapper/:config", async (req, res) => {
+  const { transactionId, payload } = req.body;
+  const config = req.params.config;
+  let session = getCache("jm_" + transactionId);
+
+  if(!session) {
+    return res.status(400).send({message: "No session exists"})
+  }
+
+  try {
+    const becknPayload = createBecknObject(
+      session,
+      session.protocolCalls[config],
+      payload
+    );
+    console.log("becknPayload", becknPayload)
+    insertRequest(becknPayload, null);
+    session.protocolCalls[config].executed = true
+    session.protocolCalls[config].becknPayload = becknPayload
+    session.protocolCalls[config].businessPayload = payload
+    session = {...session, ...payload}
+
+    const header = {};
+    header.headers = { ...header.headers, "Content-Type": "application/json" };
+    console.log(">>", session.protocolCalls[config].type)
+    const response = await axios.post(
+      `http://localhost:5500/${session.protocolCalls[config].type}`,
+      JSON.stringify(becknPayload, null, 2),
+      header
+    );
+
+    insertRequest(response, null);
+    const nextRequest = session.protocolCalls[config].nextRequest
+    const businessPayload = extractBusinessData( nextRequest, response);
+ 
+    session.protocolCalls[nextRequest] = {
+      ...session.protocolCalls[nextRequest],
+      executed: true,
+      shouldRender: true,
+      becknPayload: response,
+      businessPayload: businessPayload
+    }
+    insertSession(session)
+    res.send({data: businessPayload, session})
+  } catch (e) {
+    // console.log("Error while sending request", e);
+    return res.status(500).send({data: "Error while sending reques", e});
+  }
+});
 
 module.exports = router

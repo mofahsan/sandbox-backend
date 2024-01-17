@@ -96,8 +96,13 @@ if (keyID) {
 return null; // Subscriber ID not found
 };
 
+const insertSession = (session) => {
+    console.log("session", session)
+   myCache.set("jm_" + session.transaction_id, session) 
+};   
+
 
 module.exports = {
-insertRequest,getCache,generateHeader,deleteCache, verifyHeader
+insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession
 }
 

@@ -1,0 +1,95 @@
+search_route:
+  type: "search"
+  executed: false
+  shouldRender: true
+  config: "search_route"
+  nextRequest: "on_search_route"
+  isCollapsed: false
+
+on_search_route:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search_route"
+  nextRequest: "search_trip"
+  isCollapsed: false
+
+search_trip:
+  type: "search"
+  executed: false
+  shouldRender: false
+  config: "search_trip"
+  nextRequest: "on_search_trip"
+  isCollapsed: false
+
+on_search_trip:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search_trip"
+  nextRequest: "select"
+  isCollapsed: false
+
+select:
+  type: "select"
+  executed: false
+  shouldRender: false
+  config: "select"
+  nextRequest: "on_select"
+  isCollapsed: false
+
+on_select:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select"
+  nextRequest: "init"
+  isCollapsed: false
+
+init:
+  type: "init"
+  executed: false
+  shouldRender: false
+  config: "init"
+  nextRequest: "on_init"
+  isCollapsed: false
+
+on_init:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init"
+  nextRequest: "confirm"
+  isCollapsed: false
+
+confirm:
+  type: "confirm"
+  executed: false
+  shouldRender: false
+  config: "confirm"
+  nextRequest: "on_confirm"
+  isCollapsed: false
+
+on_confirm:
+  type: "on_confirm"
+  executed: false
+  shouldRender: false
+  config: "on_confirm"
+  nextRequest: "status"
+  isCollapsed: false
+
+status:
+  type: "status"
+  executed: false
+  shouldRender: false
+  config: "status"
+  nextRequest: "on_status"
+  isCollapsed: false
+
+on_status:
+  type: "on_status"
+  executed: false
+  shouldRender: false
+  config: "on_status"
+  nextRequest: null
+  isCollapsed: false
