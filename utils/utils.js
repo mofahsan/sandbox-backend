@@ -1,6 +1,6 @@
 const cache = require("node-cache")
-const {createAuthorizationHeader} = require("ondc-crypto-sdk-nodejs")
-
+const {createAuthorizationHeader, isSignatureValid} = require("ondc-crypto-sdk-nodejs")
+const axios = require("axios");
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
 
 function  insertRequest(request,header){
@@ -35,8 +35,69 @@ async function generateHeader(message){
     return myCache.set(transactionId,[],15000)
 }
 
+const verifyHeader = async (req, lookup_uri) => {
+    const headers = req.headers;
+    const public_key = await getPublicKey(lookup_uri, headers);
+    // logger.info(`Public key retrieved from registry : ${public_key}`);
+    // const public_key = security.publickey;
+    //Validate the request source against the registry
+    const isValidSource = await isSignatureValid({
+      header: headers.authorization, // The Authorisation header sent by other network participants
+      body: req.body,
+      publicKey: public_key,
+    });
+    if (!isValidSource) {
+      return false;
+    }
+    return true;
+  };
+
+const getPublicKey = async (lookupUri, header) => {
+try {
+    // let lookupUri = "https://preprod.registry.ondc.org/ondc/lookup";
+    const extractSubscriberIdukId = extractSubscriberId(header);
+    const subscriberId = extractSubscriberIdukId.subscriberID;
+    const ukId = extractSubscriberIdukId.uniquePublicKeyID;
+    let publicKey;
+    await axios
+    .post(lookupUri, {
+        subscriber_id: subscriberId,
+        ukId: ukId,
+    })
+    .then((response) => {
+        response = response.data;
+        publicKey = response[0]?.signing_public_key;
+    });
+
+    return publicKey;
+} catch (error) {
+    console.trace(error);
+}
+};
+
+const extractSubscriberId = (header) => {
+// Find the Authorization header
+const authorizationHeader = header.authorization;
+const regex = /keyId="([^"]+)"/;
+const matches = regex.exec(authorizationHeader);
+const keyID = matches[1];
+if (keyID) {
+    // Split the header value using the delimiter '|'
+    const parts = keyID.split("|");
+
+    // Check if the parts array has at least two elements
+    if (parts.length >= 2) {
+    const subscriberID = parts[0];
+    const uniquePublicKeyID = parts[1];
+    // Return an object with both values
+    return { subscriberID, uniquePublicKeyID };
+    }
+}
+return null; // Subscriber ID not found
+};
+
 
 module.exports = {
-insertRequest,getCache,generateHeader,deleteCache
+insertRequest,getCache,generateHeader,deleteCache, verifyHeader
 }
 
