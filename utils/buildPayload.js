@@ -65,7 +65,6 @@ const createNestedField = (obj, path, value) => {
 };
 
 const createPayload = (config, action, data, session) => {
-  console.log("session", session);
   const payload = {};
   const startPoint = "START";
   const endPoint = "END";
@@ -100,22 +99,29 @@ const extractData = (obj, config, commData = {}) => {
 
   const item = config.value;
   if (item.type === "Array") {
-    console.log("item Array", item);
-    return eval(item.path)?.map((data) => {
-      return extractData(data, item, commData);
+    const response = [];
+    eval(item.path)?.some((data) => {
+      const result = extractData(data, item, commData);
+      if (result) {
+        response.push(result);
+      }
     });
+    return response;
   } else if (item.type === "String") {
-    let data = {};
-    data[`${item.key}`] = eval(item.path);
+    if (item.check ? eval(item.check) : true) {
+      let data = {};
+      data[`${item.key}`] = eval(item.path);
 
-    return { ...data, ...commData };
+      return { ...data, ...commData };
+    }
   } else if (item.type === "Object") {
-    console.log("item Object", item);
-    const data = {};
-    item.value.map((val) => {
-      data[val.key] = eval(val.value);
-    });
-    return { ...data, ...commData };
+    if (item.check ? eval(item.check) : true) {
+      const data = {};
+      item.value.map((val) => {
+        data[val.key] = eval(val.value);
+      });
+      return { ...data, ...commData };
+    }
   }
 };
 
@@ -123,9 +129,7 @@ const createBusinessPayload = (myconfig, obj) => {
   const payload = {};
   myconfig.map((conf) => {
     if (eval(conf.value)) {
-      console.log('conf". "', conf, obj);
       const response = extractData(obj, conf);
-      console.log("respojse", response);
       createNestedField(
         payload,
         conf.business_key,

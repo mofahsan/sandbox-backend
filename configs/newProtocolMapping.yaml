@@ -262,25 +262,14 @@ protocol:
   on_search_route:
     mapping:
       - business_key: "name"
-        value: "obj?.message?.catalog?.descriptor?.name"
+        value: $.message.catalog.descriptor.name
       - business_key: "bpp_id"
-        value: "obj?.context?.bpp_id"
+        value: $.context.bpp_id
       - business_key: "bpp_uri"
-        value: "obj?.context?.bpp_uri"
+        value: $.context.bpp_uri
       - business_key: "location"
-        value:
-          path: "obj?.message?.catalog?.providers"
-          type: "Array"
-          value:
-            path: "obj.fulfillments"
-            type: "Array"
-            value:
-              path: "obj.stops"
-              type: "Array"
-              value:
-                path: "obj.location?.descriptor?.code || obj.location?.descriptor?.name"
-                key: "lcoationName"
-                type: "String"
+        value: $.message.catalog.providers[:].fulfillments[:].stops[:].location.descriptor.code
+        becken_key: "obj?.message?.catalog?.descriptor?.name"
 
   on_search_trip:
     mapping:
@@ -345,23 +334,7 @@ protocol:
       - business_key: "status"
         value: "obj.message.order.status"
       - business_key: "QR code"
-        value:
-          path: "obj.message.order.fulfillments"
-          type: "Array"
-          value:
-            path: "obj.stops"
-            type: "Array"
-            value:
-              key: "token"
-              type: "Object"
-              check: "obj.type === 'START'"
-              value:
-                - key: "token"
-                  value: "obj?.authorization?.token"
-                - key: "status"
-                  value: "obj?.authorization?.status"
-                - key: "statusss"
-                  value: "obj?.authorization?.statusss"
+        value: $.message.order.fulfillments[:].stops[?(@.type == 'START')].authorization
 
   on_status:
     mapping:

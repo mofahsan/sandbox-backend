@@ -7,7 +7,7 @@ function  insertRequest(request,header){
 let response = myCache.get(request.context.transaction_id)||[]
 const order = response.length >= 1 ? response[response.length-1].order+1 : 1
 const date = new Date()
-myCache.set(request.context.transaction_id,[...response,{action: request.context.action,order:order,header:header?header:null,timestamp:date,data:request}],15000)
+myCache.set(request.context.transaction_id,[...response,{action: request.context.action,order:order,header:header?header:null,timestamp:date,data:request}],1000 * 60 * 10)
 return order
 }
 
@@ -97,8 +97,7 @@ return null; // Subscriber ID not found
 };
 
 const insertSession = (session) => {
-    console.log("session", session)
-   myCache.set("jm_" + session.transaction_id, session) 
+   myCache.set("jm_" + session.transaction_id, session, 1000 * 60 * 10) 
 };   
 
 

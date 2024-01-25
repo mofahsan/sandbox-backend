@@ -15,6 +15,7 @@ const {
   insertSession,
 } = require("../utils/utils");
 const {createBecknObject, extractBusinessData} = require('../utils/buildPayload')
+const {apiResponse} = require("../utils/response")
 
 
 //router.get("*",async(req,res)=>{
@@ -159,12 +160,10 @@ router.post("/mapper/session", (req, res) => {
     ttl,
     version,
     country,
-    city,
     cityCode,
     transaction_id,
   } = req.body;
 
-  console.log("req", req.body)
 
   if (
     !bap_id ||
@@ -173,12 +172,11 @@ router.post("/mapper/session", (req, res) => {
     !ttl ||
     !version ||
     !country ||
-    !city ||
     !cityCode ||
     !transaction_id
   ) {
     return res.status(400).send({
-      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || city || cityCode || transaction_id missing",
+      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || cityCode || transaction_id missing",
     });
   }
 
@@ -224,21 +222,26 @@ router.post("/mapper/:config", async (req, res) => {
       session.protocolCalls[config],
       payload
     );
-    console.log("becknPayload", becknPayload)
+
     insertRequest(becknPayload, null);
-    session.protocolCalls[config].executed = true
-    session.protocolCalls[config].becknPayload = becknPayload
-    session.protocolCalls[config].businessPayload = payload
+    session.protocolCalls[config] = {
+      ...session.protocolCalls[config],
+      executed: true,
+      shouldRender: true,
+      becknPayload: becknPayload,
+      businessPayload: payload
+    }
     session = {...session, ...payload}
 
-    const header = {};
-    header.headers = { ...header.headers, "Content-Type": "application/json" };
-    console.log(">>", session.protocolCalls[config].type)
-    const response = await axios.post(
-      `http://localhost:5500/${session.protocolCalls[config].type}`,
-      JSON.stringify(becknPayload, null, 2),
-      header
-    );
+    // const header = {};
+    // header.headers = { ...header.headers, "Content-Type": "text/plain;charset=utf-8" };
+    // const response = await axios.post(
+    //   `http://localhost:5500/${session.protocolCalls[config].type}`,
+    //   JSON.stringify(becknPayload, null, 2),
+    //   header
+    // );
+
+    const response = apiResponse(config, transactionId)
 
     insertRequest(response, null);
     const nextRequest = session.protocolCalls[config].nextRequest
@@ -251,10 +254,16 @@ router.post("/mapper/:config", async (req, res) => {
       becknPayload: response,
       businessPayload: businessPayload
     }
+    
+    const thirdRequest = session.protocolCalls[nextRequest].nextRequest
+    if(thirdRequest) {
+      session.protocolCalls[thirdRequest].shouldRender = true
+    }
+
     insertSession(session)
     res.send({data: businessPayload, session})
   } catch (e) {
-    // console.log("Error while sending request", e);
+    console.log("Error while sending request", e);
     return res.status(500).send({data: "Error while sending reques", e});
   }
 });
