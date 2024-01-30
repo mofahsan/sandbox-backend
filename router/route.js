@@ -13,9 +13,12 @@ const {
   deleteCache,
   verifyHeader,
   insertSession,
+  createHeaderFromId,
+  handleRequestForJsonMapper
 } = require("../utils/utils");
 const {createBecknObject, extractBusinessData} = require('../utils/buildPayload')
 const {apiResponse} = require("../utils/response")
+const {createHeader} = require("../header")
 
 
 //router.get("*",async(req,res)=>{
@@ -91,6 +94,8 @@ router.get("/cache",async(req,res)=>{
 router.post("/ondc/:method", async (req, res) => {
   let body = req.body;
 
+  console.log("message recieved", body)
+
   if (process.env.ENABLE_SIGNATURE_VALIDATION === "true") {
     const isValid = await verifyHeader(req, process.env.LOOKUP_URL)
     if (isValid){ 
@@ -118,6 +123,7 @@ router.post("/ondc/:method", async (req, res) => {
     }
   } else {
     insertRequest(body, req.headers);
+    handleRequestForJsonMapper(body)
     const ack = {
       message: {
         ack: {
@@ -229,7 +235,8 @@ router.post("/mapper/:config", async (req, res) => {
       executed: true,
       shouldRender: true,
       becknPayload: becknPayload,
-      businessPayload: payload
+      businessPayload: payload,
+      messageId: becknPayload.context.message_id
     }
     session = {...session, ...payload}
 
@@ -241,27 +248,62 @@ router.post("/mapper/:config", async (req, res) => {
     //   header
     // );
 
-    const response = apiResponse(config, transactionId)
+    const CALLBACK_URL = "https://2273-59-145-217-117.ngrok-free.app"
+    const STAGING_GATEWAY_URL = "https://staging.gateway.proteantech.in/"
+    const SIGNING_PRIVATE_KEY =
+      "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
+    const BAP_ID = "mobility-staging.ondc.org";
+    const UNIQUE_KEY_ID = "UK-MOBILITY";
+    const type = session.protocolCalls[config].type
 
-    insertRequest(response, null);
+    becknPayload.context.bap_uri=`${CALLBACK_URL}/ondc`
+    let url ;
+
+    if(type == 'search'){
+        url = STAGING_GATEWAY_URL
+    }else{
+        url = becknPayload.context.bpp_uri
+    }
+
+    if(url[url.length-1]!="/"){ //"add / if not exists in bap uri"
+        url=url+"/"
+      }
+
+    console.log("becknPayload", JSON.stringify(becknPayload))
+
+    const signedHeader = await createHeader(becknPayload)
+    console.log("SignedHeader", signedHeader)
+
+    const header ={headers:{Authorization: signedHeader}}
+
+    const response  =  await axios.post(`${url}${type}`,becknPayload,header)
+    
+    console.log("res>>>>>>", response.data)
+   
+
+    ///////////////////////
+
+    // const response = apiResponse(config, transactionId)
+
+    // insertRequest(response, null);
     const nextRequest = session.protocolCalls[config].nextRequest
-    const businessPayload = extractBusinessData( nextRequest, response);
+    // const businessPayload = extractBusinessData( nextRequest, response);
+
+    // console.log("businessPayload", businessPayload)
  
     session.protocolCalls[nextRequest] = {
       ...session.protocolCalls[nextRequest],
-      executed: true,
       shouldRender: true,
-      becknPayload: response,
-      businessPayload: businessPayload
     }
     
-    const thirdRequest = session.protocolCalls[nextRequest].nextRequest
-    if(thirdRequest) {
-      session.protocolCalls[thirdRequest].shouldRender = true
-    }
+    // const thirdRequest = session.protocolCalls[nextRequest].nextRequest
+    // if(thirdRequest) {
+    //   session.protocolCalls[thirdRequest].shouldRender = true
+    // }
 
     insertSession(session)
-    res.send({data: businessPayload, session})
+    // res.send({data: businessPayload, session})
+    res.status(200).send({response: response.data, session})
   } catch (e) {
     console.log("Error while sending request", e);
     return res.status(500).send({data: "Error while sending reques", e});

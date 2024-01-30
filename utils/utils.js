@@ -1,6 +1,7 @@
 const cache = require("node-cache")
 const {createAuthorizationHeader, isSignatureValid} = require("ondc-crypto-sdk-nodejs")
 const axios = require("axios");
+const {extractBusinessData} = require("./buildPayload")
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
 
 function  insertRequest(request,header){
@@ -34,6 +35,29 @@ async function generateHeader(message){
    function deleteCache(transactionId) {
     return myCache.set(transactionId,[],15000)
 }
+
+const createHeaderFromId = async (body) => {
+  console.log("Body", JSON.stringify(body));
+
+  const SIGNING_PRIVATE_KEY =
+    "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
+  const BAP_ID = "mobility-staging.ondc.org";
+  const UNIQUE_KEY_ID = "UK-MOBILITY";
+
+  try {
+    const header = await createAuthorizationHeader({
+      message: body,
+      privateKey: SIGNING_PRIVATE_KEY,
+      bapId: BAP_ID, // Subscriber ID that you get after registering to ONDC Network
+      bapUniqueKeyId: UNIQUE_KEY_ID, // Unique Key Id or uKid that you get after registering to ONDC Network
+    });
+    console.log("header", header);
+
+    return header;
+  } catch (e) {
+    console.log("Error while create headers", e);
+  }
+};
 
 const verifyHeader = async (req, lookup_uri) => {
     const headers = req.headers;
@@ -100,8 +124,56 @@ const insertSession = (session) => {
    myCache.set("jm_" + session.transaction_id, session, 1000 * 60 * 10) 
 };   
 
+const handleRequestForJsonMapper = async (response) => {
+  console.log("inside handle request for json mapper")
+  let session = getCache("jm_" + response.context.transaction_id);
+
+  if (!session) {
+    console.log("No session exists")
+    return 
+  }
+
+  console.log("session", session)
+  let config = ""
+
+  Object.entries(session.protocolCalls).map(item => {
+    console.log("item", item)
+    console.log("response", response.context)
+    const [key, value] = item
+
+    if(value.messageId === response.context.message_id) {
+        config = key
+    }
+  })
+
+  console.log("config>>>>", config)
+  if(config === "") {
+    return
+  }
+
+  const nextRequest = session.protocolCalls[config].nextRequest;
+  const businessPayload = extractBusinessData(nextRequest, response);
+
+  console.log("businessPayload", businessPayload);
+
+  session.protocolCalls[nextRequest] = {
+    ...session.protocolCalls[nextRequest],
+    executed: true,
+    shouldRender: true,
+    becknPayload: response,
+    businessPayload: businessPayload,
+  };
+
+  const thirdRequest = session.protocolCalls[nextRequest].nextRequest;
+  if (thirdRequest) {
+    session.protocolCalls[thirdRequest].shouldRender = true;
+  }
+
+   insertSession(session)
+};
+
 
 module.exports = {
-insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession
+insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession, createHeaderFromId, handleRequestForJsonMapper
 }
 
