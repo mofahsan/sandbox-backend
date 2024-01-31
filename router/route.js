@@ -213,6 +213,36 @@ router.post("/mapper/session", (req, res) => {
   }
 });
 
+router.post("/mapper/timeout", async (req, res) => {
+  
+  const {config, transactionId} = req.body
+
+  if(!config || !transactionId) {
+    return res.status(400).send({data:"validations failed config || transactionid missing"})
+  }
+
+  let session = getCache("jm_" + transactionId);
+
+  if(!session) {
+    return res.status(400).send({data: "No session found."})
+  }
+
+  session.protocolCalls[config].shouldRender = false
+  const preConfig = session.protocolCalls[config].preRequest
+
+  session.protocolCalls[preConfig] = {
+    ...session.protocolCalls[preConfig],
+    executed: false,
+    shouldRender: true,
+    becknPayload: null,
+    businessPayload: null,
+    messageId: null
+  }
+
+  insertSession(session)
+  return res.status(200).send({session})
+})
+
 router.post("/mapper/:config", async (req, res) => {
   const { transactionId, payload } = req.body;
   const config = req.params.config;
