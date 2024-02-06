@@ -202,6 +202,8 @@ router.post("/mapper/session", (req, res) => {
     const session = {
       ...req.body,
       input: parsedInput,
+      currentTransactionId: transaction_id,
+      transactionIds: [req.body.transaction_id],
       protocolCalls: parsedProtocolCalls,
     };
 

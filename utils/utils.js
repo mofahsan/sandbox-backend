@@ -133,12 +133,12 @@ const handleRequestForJsonMapper = async (response) => {
     return 
   }
 
-  console.log("session", session)
+//   console.log("session", session)
   let config = ""
 
   Object.entries(session.protocolCalls).map(item => {
-    console.log("item", item)
-    console.log("response", response.context)
+    // console.log("item", item)
+    // console.log("response", response.context)
     const [key, value] = item
 
     if(value.messageId === response.context.message_id) {
@@ -160,8 +160,8 @@ const handleRequestForJsonMapper = async (response) => {
     ...session.protocolCalls[nextRequest],
     executed: true,
     shouldRender: true,
-    becknPayload: response,
-    businessPayload: businessPayload,
+    becknPayload: [...(session.protocolCalls[nextRequest].becknPayload || []),  response],
+    businessPayload: [...(session.protocolCalls[nextRequest].businessPayload || []),  businessPayload],
   };
 
   const thirdRequest = session.protocolCalls[nextRequest].nextRequest;

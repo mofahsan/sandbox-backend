@@ -115,7 +115,7 @@ const decodeInputString = (input) => {
     .filter((token) => token.trim() !== "");
 
   if (tokens.length === 1) {
-    return "obj?." + input[0].split(".").join("?.");
+    return "obj?." + tokens[0].split(".").join("?.");
   }
 
   let i = 0;
@@ -221,22 +221,29 @@ const extractData = (obj, config, commData = {}) => {
 const createBusinessPayload = (myconfig, obj) => {
   const payload = {};
 
-  myconfig.map((conf) => {
-    if (eval(conf.value)) {
-      createNestedField(
-        payload,
-        conf.business_key,
-        typeof conf.value === "string"
-          ? eval(conf.value)
-          : extractData(obj, {
-              ...conf,
-              value: decodeInputString(conf.test),
-            }).flat(Infinity)
-      );
-    }
-  });
+  try {
+    myconfig.map((conf) => {
+      if (conf.extractionPath) {
+        conf = {
+          ...conf,
+          value: decodeInputString(conf.extractionPath),
+        };
 
-  return payload;
+        createNestedField(
+          payload,
+          conf.business_key,
+          typeof conf.value === "string"
+            ? eval(conf.value)
+            : extractData(obj, conf).flat(Infinity)
+        );
+      }
+    });
+
+    return payload;
+  } catch (e) {
+    console.log("error while creating bussniss payload", e);
+    return payload;
+  }
 };
 
 const createBecknObject = (session, call, data) => {

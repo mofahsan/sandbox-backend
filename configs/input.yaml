@@ -6,19 +6,14 @@ search_route:
   - name: "Payment Tags"
     key: "paymentTagsSearch"
     type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment tags is required"
-  # - name: "Dummy"
-  #   key: "dummy"
-  #   type: "select"
-  #   defaultOptions:
-  #     - key: "first"
-  #       value: "first"
-  #     - key: "seconf"
-  #       value: "Second"
-  #     - key: "third"
-  #       value: "Third"
-  #   providedOptions: null
-  #   errorText: "Please a field"
 
 search_trip:
   - name: "BPP URI"
@@ -92,6 +87,13 @@ init:
   - name: "Payment Tags"
     key: "paymentTagsInit"
     type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
 
 confirm:
@@ -126,6 +128,13 @@ confirm:
   - name: "Payment Tags"
     key: "paymentTagsConfirm"
     type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
 
 status:
