@@ -1,0 +1,87 @@
+search:
+  type: "search"
+  executed: false
+  shouldRender: true
+  config: "search"
+  nextRequest: "on_search"
+  isCollapsed: false
+
+on_search:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search"
+  nextRequest: "select"
+  isCollapsed: false
+
+select:
+  type: "select"
+  executed: false
+  shouldRender: false
+  config: "select"
+  nextRequest: "on_select"
+  isCollapsed: false
+
+on_select:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select"
+  nextRequest: "init"
+  isCollapsed: false
+
+init:
+  type: "init"
+  executed: false
+  shouldRender: false
+  config: "init"
+  nextRequest: "on_init"
+  isCollapsed: false
+
+on_init:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init"
+  nextRequest: "confirm"
+  isCollapsed: false
+
+confirm:
+  type: "confirm"
+  executed: false
+  shouldRender: false
+  config: "confirm"
+  nextRequest: "on_confirm"
+  isCollapsed: false
+
+on_confirm:
+  type: "on_confirm"
+  executed: false
+  shouldRender: false
+  config: "on_confirm"
+  nextRequest: "on_update"
+  isCollapsed: false
+
+on_update:
+  type: "on_update"
+  executed: false
+  shouldRender: false
+  config: "on_update"
+  nextRequest: "status"
+  isCollapsed: false
+
+status:
+  type: "status"
+  executed: false
+  shouldRender: false
+  config: "status"
+  nextRequest: "on_status"
+  isCollapsed: false
+
+on_status:
+  type: "on_status"
+  executed: false
+  shouldRender: false
+  config: "on_status"
+  nextRequest: null
+  isCollapsed: false

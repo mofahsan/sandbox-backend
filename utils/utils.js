@@ -124,8 +124,15 @@ const insertSession = (session) => {
    myCache.set("jm_" + session.transaction_id, session, 1000 * 60 * 10) 
 };   
 
-const handleRequestForJsonMapper = async (response) => {
-  console.log("inside handle request for json mapper")
+const handleRequestForJsonMapper = async (response, unsolicited = false) => {
+  const ack = {
+    message: {
+      ack: {
+        status: "ACK",
+      },
+    },
+  };
+  console.log("inside handle request for json mapper", response)
   let session = getCache("jm_" + response.context.transaction_id);
 
   if (!session) {
@@ -140,19 +147,22 @@ const handleRequestForJsonMapper = async (response) => {
     // console.log("item", item)
     // console.log("response", response.context)
     const [key, value] = item
-
+    console.log("value.messageId === response.context.message_id", value.messageId , response.context.message_id)
     if(value.messageId === response.context.message_id) {
         config = key
     }
   })
 
   console.log("config>>>>", config)
-  if(config === "") {
+  if(config === "" && !unsolicited) {
     return
   }
 
-  const nextRequest = session.protocolCalls[config].nextRequest;
-  const businessPayload = extractBusinessData(nextRequest, response);
+  let nextRequest = session.protocolCalls[config].nextRequest;
+  if(unsolicited) {
+    nextRequest = response.context.action
+  }
+  const businessPayload = extractBusinessData(nextRequest, response, session);
 
   console.log("businessPayload", businessPayload);
 
@@ -162,6 +172,7 @@ const handleRequestForJsonMapper = async (response) => {
     shouldRender: true,
     becknPayload: [...(session.protocolCalls[nextRequest].becknPayload || []),  response],
     businessPayload: [...(session.protocolCalls[nextRequest].businessPayload || []),  businessPayload],
+    becknResponse:  [...(session.protocolCalls[nextRequest].becknResponse || []),  ack]
   };
 
   const thirdRequest = session.protocolCalls[nextRequest].nextRequest;

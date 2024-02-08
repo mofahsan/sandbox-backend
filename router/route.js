@@ -19,6 +19,7 @@ const {
 const {createBecknObject, extractBusinessData} = require('../utils/buildPayload')
 const {apiResponse} = require("../utils/response")
 const {createHeader} = require("../header")
+const {extractPath} = require("../utils/buildPayload")
 
 
 //router.get("*",async(req,res)=>{
@@ -168,6 +169,7 @@ router.post("/mapper/session", (req, res) => {
     country,
     cityCode,
     transaction_id,
+    configName
   } = req.body;
 
 
@@ -179,22 +181,25 @@ router.post("/mapper/session", (req, res) => {
     !version ||
     !country ||
     !cityCode ||
-    !transaction_id
+    !transaction_id ||
+    !configName
   ) {
     return res.status(400).send({
-      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || cityCode || transaction_id missing",
+      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || cityCode || transaction_id || configName missing",
     });
   }
 
+  console.log("body>>>>>", req.body)
+
   try {
     const protocolCalls = fs.readFileSync(
-      path.join(__dirname, "../", "configs", "protocolCalls.yaml"),
+      path.join(__dirname, "../", "configs", req.body.configName, "protocolCalls.yaml"),
       "utf8"
     );
     const parsedProtocolCalls = yaml.load(protocolCalls);
 
     const input = fs.readFileSync(
-      path.join(__dirname, "../", "configs", "input.yaml"),
+      path.join(__dirname, "../", "configs", req.body.configName, "input.yaml"),
       "utf8"
     );
     const parsedInput = yaml.load(input);
@@ -244,6 +249,22 @@ router.post("/mapper/timeout", async (req, res) => {
   insertSession(session)
   return res.status(200).send({session})
 })
+
+router.post("/mapper/extractPath", (req, res) => {
+  const { path, obj } = req.body;
+
+  if (!path || !obj) {
+    return res.status(400).send({ data: "missing path || obj " });
+  }
+  try {
+    const response = extractPath(path, obj);
+
+    res.send({ data: response });
+  } catch (e) {
+    console.log("Error while extracting path", e);
+    res.status(400).send({ error: true, data: e });
+  }
+});
 
 router.post("/mapper/:config", async (req, res) => {
   const { transactionId, payload } = req.body;
@@ -311,30 +332,27 @@ router.post("/mapper/:config", async (req, res) => {
     const response  =  await axios.post(`${url}${type}`,becknPayload,header)
     
     console.log("res>>>>>>", response.data)
-   
 
-    ///////////////////////
+    session.protocolCalls[config] = {
+      ...session.protocolCalls[config],
+     becknResponse: response.data
+    }
 
-    // const response = apiResponse(config, transactionId)
+    // const response = {data: "afsa"}
 
-    // insertRequest(response, null);
     const nextRequest = session.protocolCalls[config].nextRequest
-    // const businessPayload = extractBusinessData( nextRequest, response);
-
-    // console.log("businessPayload", businessPayload)
  
     session.protocolCalls[nextRequest] = {
       ...session.protocolCalls[nextRequest],
       shouldRender: true,
     }
-    
-    // const thirdRequest = session.protocolCalls[nextRequest].nextRequest
-    // if(thirdRequest) {
-    //   session.protocolCalls[thirdRequest].shouldRender = true
-    // }
 
     insertSession(session)
-    // res.send({data: businessPayload, session})
+    // // For tesitng
+    // handleRequestForJsonMapper(apiResponse(config, transactionId, becknPayload.context.message_id))
+    // if(config === "confirm") {
+    //   handleRequestForJsonMapper(apiResponse("update", transactionId), true)
+    // }
     res.status(200).send({response: response.data, session})
   } catch (e) {
     console.log("Error while sending request", e);

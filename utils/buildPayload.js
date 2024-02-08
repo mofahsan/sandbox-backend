@@ -3,10 +3,14 @@ const path = require("path");
 const yaml = require("js-yaml");
 const { v4: uuidv4 } = require("uuid");
 
-const yamlConfig = fs.readFileSync(
-  path.join(__dirname, "../", "configs", "protocolMapping.yaml"),
-  "utf8"
-);
+const getYamlConfig = (configName) => {
+  const yamlConfig = fs.readFileSync(
+    path.join(__dirname, "../", "configs", configName, "protocolMapping.yaml"),
+    "utf8"
+  );
+
+  return yamlConfig;
+};
 
 // function used inside eval function
 const buildTags = (tags) => {
@@ -247,15 +251,15 @@ const createBusinessPayload = (myconfig, obj) => {
 };
 
 const createBecknObject = (session, call, data) => {
-  const parsedYaml = yaml.load(yamlConfig);
+  const parsedYaml = yaml.load(getYamlConfig(session.configName));
   const config = parsedYaml.protocol[call.config];
   const payload = createPayload(config, call.type, data, session);
 
   return payload;
 };
 
-const extractBusinessData = (type, payload) => {
-  const parsedYaml = yaml.load(yamlConfig);
+const extractBusinessData = (type, payload, session) => {
+  const parsedYaml = yaml.load(getYamlConfig(session.configName));
 
   const result = createBusinessPayload(
     parsedYaml.protocol[type].mapping,
@@ -265,7 +269,29 @@ const extractBusinessData = (type, payload) => {
   return result;
 };
 
+const extractPath = (path, obj) => {
+  const payload = {};
+
+  try {
+    const value = decodeInputString(path);
+
+    createNestedField(
+      payload,
+      "data",
+      typeof value === "string"
+        ? eval(value)
+        : extractData(obj, { value }).flat(Infinity)
+    );
+
+    return payload;
+  } catch (e) {
+    console.log("error while creating bussniss payload", e);
+    return payload;
+  }
+};
+
 module.exports = {
   createBecknObject,
   extractBusinessData,
+  extractPath,
 };

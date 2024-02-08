@@ -4,6 +4,7 @@ search_route:
   shouldRender: true
   config: "search_route"
   nextRequest: "on_search_route"
+  preRequest: null
   isCollapsed: false
 
 on_search_route:
@@ -12,6 +13,7 @@ on_search_route:
   shouldRender: false
   config: "on_search_route"
   nextRequest: "search_trip"
+  preRequest: "search_route"
   isCollapsed: false
 
 search_trip:
@@ -20,6 +22,7 @@ search_trip:
   shouldRender: false
   config: "search_trip"
   nextRequest: "on_search_trip"
+  preRequest: "on_search_route"
   isCollapsed: false
 
 on_search_trip:
@@ -28,6 +31,7 @@ on_search_trip:
   shouldRender: false
   config: "on_search_trip"
   nextRequest: "select"
+  preRequest: "search_trip"
   isCollapsed: false
 
 select:
@@ -36,6 +40,7 @@ select:
   shouldRender: false
   config: "select"
   nextRequest: "on_select"
+  preRequest: "on_search_trip"
   isCollapsed: false
 
 on_select:
@@ -44,6 +49,7 @@ on_select:
   shouldRender: false
   config: "on_select"
   nextRequest: "init"
+  preRequest: "select"
   isCollapsed: false
 
 init:
@@ -52,6 +58,7 @@ init:
   shouldRender: false
   config: "init"
   nextRequest: "on_init"
+  preRequest: "on_select"
   isCollapsed: false
 
 on_init:
@@ -60,6 +67,7 @@ on_init:
   shouldRender: false
   config: "on_init"
   nextRequest: "confirm"
+  preRequest: "init"
   isCollapsed: false
 
 confirm:
@@ -68,6 +76,7 @@ confirm:
   shouldRender: false
   config: "confirm"
   nextRequest: "on_confirm"
+  preRequest: "confirm"
   isCollapsed: false
 
 on_confirm:
@@ -76,6 +85,7 @@ on_confirm:
   shouldRender: false
   config: "on_confirm"
   nextRequest: "status"
+  preRequest: "confirm"
   isCollapsed: false
 
 status:
@@ -84,6 +94,7 @@ status:
   shouldRender: false
   config: "status"
   nextRequest: "on_status"
+  preRequest: "on_confirm"
   isCollapsed: false
 
 on_status:
@@ -92,4 +103,5 @@ on_status:
   shouldRender: false
   config: "on_status"
   nextRequest: null
+  preRequest: "status"
   isCollapsed: false
