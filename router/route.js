@@ -46,7 +46,7 @@ router.post("/:method",async(req,res)=>{
             url=url+"/"
           }
 
-        const header ={headers:{Authorization:await generateHeader(req.body)}}
+        const header ={headers:{Authorization:await generateHeader(body)}}
 
         insertRequest(body,req.headers)
         const response  =  await axios.post(`${url}${method}`,body,header)
