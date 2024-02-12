@@ -1,0 +1,14 @@
+server:
+  port: 80
+  security:
+    privatekey: "fsfsdf"
+    ukId: "fsdfsdf"
+flows:
+  - summary: metro complete flow
+    id: metro-flow-1
+    input:
+      $ref: ./configs/metro-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/metro-flow-1/protocolMapping.yaml
+  - summary: metro init flow
+    id: metro-2

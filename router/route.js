@@ -20,8 +20,10 @@ const {createBecknObject, extractBusinessData} = require('../utils/buildPayload'
 const {apiResponse} = require("../utils/response")
 const {createHeader} = require("../header")
 const {extractPath} = require("../utils/buildPayload")
+const {configLoader} = require("../configs/index")
 
 
+console.log("config>>>>", JSON.stringify(configLoader.getConfig(), null, 2))
 //router.get("*",async(req,res)=>{
 //	console.log(req.url)
 //	res.send("server working")
@@ -259,7 +261,7 @@ router.post("/mapper/extractPath", (req, res) => {
   try {
     const response = extractPath(path, obj);
 
-    res.send({ data: response });
+    res.send({ response });
   } catch (e) {
     console.log("Error while extracting path", e);
     res.status(400).send({ error: true, data: e });
