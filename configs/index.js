@@ -30,6 +30,5 @@ class ConfigLoader {
 }
 
 const configLoader = new ConfigLoader();
-// configLoader.init();
 
 module.exports = { configLoader };

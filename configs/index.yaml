@@ -10,5 +10,13 @@ flows:
       $ref: ./configs/metro-flow-1/input.yaml
     protocol:
       $ref: ./configs/metro-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/metro-flow-1/protocolCalls.yaml
   - summary: metro init flow
     id: metro-2
+    input:
+      $ref: ./configs/ondemand-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/ondemand-flow-1/protocolCalls.yaml

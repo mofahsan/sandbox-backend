@@ -42,10 +42,22 @@ search_trip:
     errorText: "End stop is required"
 
 select:
+  - name: "BPP URI"
+    key: "bpp_uri"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
+    errorText: "BPP URI is required"
+  - name: "BPP ID"
+    key: "bpp_id"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
+    errorText: "BPP ID is required"
   - name: "Item id"
     key: "itemId"
     type: "select"
-    extractionPath: "businessPayload[].items[]{key: name, value: id}"
+    extractionPath: "businessPayload[?(bpp_id === '${bpp_id}')].items[]{key: name, value: id}"
+    extractionPathReplace: "${bpp_id}"
+    extractionPathReplaceWith: formData.bpp_id
     errorText: "Item id is required"
   - name: "Quantity"
     key: "quantity"
@@ -54,7 +66,9 @@ select:
   - name: "Provider id"
     key: "providerId"
     type: "select"
-    extractionPath: "businessPayload[].items[]{key: providerId, value: providerId}"
+    extractionPath: "businessPayload[?(bpp_id === '${bpp_id}')].items[]{key: providerId, value: providerId}"
+    extractionPathReplace: "${bpp_id}"
+    extractionPathReplaceWith: formData.bpp_id
     errorText: "Provider id is required"
 
 init:

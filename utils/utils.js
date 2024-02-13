@@ -5,6 +5,7 @@ const {extractBusinessData} = require("./buildPayload")
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
 
 function  insertRequest(request,header){
+  if(!request?.context?.transaction_id) return
 let response = myCache.get(request.context.transaction_id)||[]
 const order = response.length >= 1 ? response[response.length-1].order+1 : 1
 const date = new Date()
@@ -125,6 +126,7 @@ const insertSession = (session) => {
 };   
 
 const handleRequestForJsonMapper = async (response, unsolicited = false) => {
+  if(!response?.context?.transaction_id) return
   const ack = {
     message: {
       ack: {
@@ -133,7 +135,22 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
     },
   };
   console.log("inside handle request for json mapper", response)
-  let session = getCache("jm_" + response.context.transaction_id);
+  
+  // let session = getCache("jm_" + response.context.transaction_id);
+  let session = null
+
+  const allSession = getCache();
+  console.log("allSessions", allSession);
+
+  allSession.map((ses) => {
+    if (!ses.startsWith("jm_")) return;
+
+    const sessionData = getCache(ses);
+    if(sessionData.transactionIds.includes(response.context.transaction_id)) {
+      console.log(" got session>>>>")
+      session = sessionData
+    }
+  });
 
   if (!session) {
     console.log("No session exists")
@@ -147,13 +164,12 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
     // console.log("item", item)
     // console.log("response", response.context)
     const [key, value] = item
-    console.log("value.messageId === response.context.message_id", value.messageId , response.context.message_id)
     if(value.messageId === response.context.message_id) {
         config = key
     }
   })
 
-  console.log("config>>>>", config)
+  // console.log("config>>>>", config)
   if(config === "" && !unsolicited) {
     return
   }
@@ -164,7 +180,7 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
   }
   const businessPayload = extractBusinessData(nextRequest, response, session);
 
-  console.log("businessPayload", businessPayload);
+  // console.log("businessPayload", businessPayload);
 
   session.protocolCalls[nextRequest] = {
     ...session.protocolCalls[nextRequest],

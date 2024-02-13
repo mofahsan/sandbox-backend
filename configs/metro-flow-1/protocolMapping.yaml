@@ -10,7 +10,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -32,8 +32,10 @@ protocol:
 
   search_trip:
     sessionData:
-      - key: currentTranscationId
-        value: uuidv4()
+      - beckn_key: currentTransactionId
+        value: newTranscationId
+      - beckn_key: transactionIds
+        value: "[...session.transactionIds, newTranscationId]"
 
     mapping:
       - beckn_key: context.bap_id
@@ -45,7 +47,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -73,8 +75,8 @@ protocol:
       - beckn_key: message.intent.fulfillment.vehicle.category
         value: data.vehicleCategaory || session.vehicleCategaory
       - beckn_key: message.intent.payment.tags
-        value: data.paymentTags || session.paymentTags
-        compute: buildTags(data.paymentTags || session.paymentTags)
+        value: data.paymentTags || session.paymentTagsSearch
+        compute: buildTags(data.paymentTags || session.paymentTagsSearch)
 
   select:
     mapping:
@@ -91,7 +93,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -127,7 +129,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -185,7 +187,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -246,7 +248,7 @@ protocol:
       - beckn_key: context.location.city.code
         value: session.cityCode
       - beckn_key: context.transaction_id
-        value: session.transaction_id
+        value: session.currentTransactionId
       - beckn_key: context.message_id
         value: messageId
       - beckn_key: context.timestamp
@@ -278,6 +280,10 @@ protocol:
     mapping:
       - business_key: "name"
         extractionPath: "message.catalog.descriptor.name"
+      - business_key: "bpp_id"
+        extractionPath: context.bpp_id
+      - business_key: "bpp_uri"
+        extractionPath: context.bpp_uri
       - business_key: "items"
         extractionPath: "message.catalog.providers[]{providerId: id}.items[]{id: id, name: descriptor.name}"
 

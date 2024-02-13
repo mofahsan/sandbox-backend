@@ -18,17 +18,6 @@ search:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment tags is required"
-  - name: "Dummy"
-    key: "dummy"
-    type: "select"
-    defaultOptions:
-      - key: "first"
-        value: "first"
-      - key: "seconf"
-        value: "Second"
-      - key: "third"
-        value: "Third"
-    errorText: "Please select a field"
 
 select:
   - name: "BPP URI"

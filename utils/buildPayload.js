@@ -75,8 +75,9 @@ const createPayload = (config, action, data, session) => {
   const messageId = uuidv4();
   const paymentId = uuidv4();
   const timestamp = new Date().toISOString();
+  const newTranscationId = uuidv4();
 
-  config.mapping.map((item) => {
+  config.map((item) => {
     if (eval(item.value) && (item.check ? eval(item.check) : true))
       createNestedField(
         payload,
@@ -253,9 +254,19 @@ const createBusinessPayload = (myconfig, obj) => {
 const createBecknObject = (session, call, data) => {
   const parsedYaml = yaml.load(getYamlConfig(session.configName));
   const config = parsedYaml.protocol[call.config];
-  const payload = createPayload(config, call.type, data, session);
+  if (config.sessionData) {
+    const updatedSession = createPayload(
+      config.sessionData,
+      call.type,
+      data,
+      session
+    );
 
-  return payload;
+    session = { ...session, ...updatedSession };
+  }
+  const payload = createPayload(config.mapping, call.type, data, session);
+
+  return { payload, session };
 };
 
 const extractBusinessData = (type, payload, session) => {

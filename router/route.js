@@ -23,7 +23,7 @@ const {extractPath} = require("../utils/buildPayload")
 const {configLoader} = require("../configs/index")
 
 
-console.log("config>>>>", JSON.stringify(configLoader.getConfig(), null, 2))
+// console.log("config>>>>", JSON.stringify(configLoader.getConfig(), null, 2))
 //router.get("*",async(req,res)=>{
 //	console.log(req.url)
 //	res.send("server working")
@@ -210,9 +210,11 @@ router.post("/mapper/session", (req, res) => {
       ...req.body,
       input: parsedInput,
       currentTransactionId: transaction_id,
-      transactionIds: [req.body.transaction_id],
+      transactionIds: [transaction_id],
       protocolCalls: parsedProtocolCalls,
     };
+
+    // console.log("crfeating session", session)
 
     insertSession(session);
     res.send({ sucess: true, data: session });
@@ -278,11 +280,13 @@ router.post("/mapper/:config", async (req, res) => {
   }
 
   try {
-    const becknPayload = createBecknObject(
+    const {payload: becknPayload, session: updatedSession} = createBecknObject(
       session,
       session.protocolCalls[config],
       payload
     );
+
+    session = updatedSession
 
     insertRequest(becknPayload, null);
     session.protocolCalls[config] = {
