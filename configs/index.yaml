@@ -13,7 +13,7 @@ flows:
     calls:
       $ref: ./configs/metro-flow-1/protocolCalls.yaml
   - summary: metro init flow
-    id: metro-2
+    id: ondemand-flow-1
     input:
       $ref: ./configs/ondemand-flow-1/input.yaml
     protocol:
