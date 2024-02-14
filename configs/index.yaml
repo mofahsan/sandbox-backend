@@ -1,8 +1,18 @@
 server:
   port: 80
-  security:
-    privatekey: "fsfsdf"
-    ukId: "fsdfsdf"
+  variables:
+    dev:
+      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
+      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
+      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
+      bapId: "mobility-staging.ondc.org"
+      uniqueKeyId: "UK-MOBILITY"
+    prod:
+      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
+      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
+      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
+      bapId: "mobility-staging.ondc.org"
+      uniqueKeyId: "UK-MOBILITY"
 flows:
   - summary: metro complete flow
     id: metro-flow-1

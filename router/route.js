@@ -135,8 +135,6 @@ router.post("/ondc/:method", async (req, res) => {
       },
     };
     res.status(200).json(ack);
-    console.log(req.body.context, "recieved context");
-    console.log(ack, "response");
   }
 });
 
@@ -307,7 +305,7 @@ router.post("/mapper/:config", async (req, res) => {
     //   header
     // );
 
-    const CALLBACK_URL = "https://2273-59-145-217-117.ngrok-free.app"
+    const CALLBACK_URL = process.env.callbackUrl
     const STAGING_GATEWAY_URL = "https://staging.gateway.proteantech.in/"
     const SIGNING_PRIVATE_KEY =
       "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
