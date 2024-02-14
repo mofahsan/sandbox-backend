@@ -1,0 +1,32 @@
+server:
+  port: 80
+  variables:
+    dev:
+      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
+      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
+      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
+      bapId: "mobility-staging.ondc.org"
+      uniqueKeyId: "UK-MOBILITY"
+    prod:
+      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
+      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
+      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
+      bapId: "mobility-staging.ondc.org"
+      uniqueKeyId: "UK-MOBILITY"
+flows:
+  - summary: metro complete flow
+    id: metro-flow-1
+    input:
+      $ref: ./configs/metro-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/metro-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/metro-flow-1/protocolCalls.yaml
+  - summary: metro init flow
+    id: ondemand-flow-1
+    input:
+      $ref: ./configs/ondemand-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/ondemand-flow-1/protocolCalls.yaml

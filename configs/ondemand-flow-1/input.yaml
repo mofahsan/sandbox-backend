@@ -1,0 +1,130 @@
+search:
+  - name: "Start Coordinates"
+    key: "startCoordinates"
+    type: "text"
+    errorText: "Start Coordinates is required"
+  - name: "End Coordinates"
+    key: "endCoordinates"
+    type: "text"
+    errorText: "End Coordinates is required"
+  - name: "Payment Tags"
+    key: "paymentTagsSearch"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment tags is required"
+
+select:
+  - name: "BPP URI"
+    key: "bpp_uri"
+    type: "text"
+    error: "BPP URI is required"
+  - name: "BPP ID"
+    key: "bpp_id"
+    type: "text"
+    error: "BPP ID is required"
+  - name: "Item id"
+    key: "itemId"
+    type: "text"
+    errorText: "Item id is required"
+  - name: "Provider Id"
+    key: "providerId"
+    type: "text"
+    errorText: "Provider Id is required"
+
+init:
+  - name: "Name"
+    key: "name"
+    type: "text"
+    errorText: "Name is required"
+  - name: "Phone"
+    key: "phone"
+    type: "text"
+    errorText: "Phone is required"
+  - name: "Collected By"
+    key: "collectedBy"
+    type: "text"
+    errorText: "Collected By is required"
+  - name: "Payment Status"
+    key: "paymentStatus"
+    type: "select"
+    defaultOptions:
+      - key: "PAID"
+        value: "PAID"
+      - key: "NOT-PAID"
+        value: "NOT-PAID"
+    errorText: "Please select a field"
+  - name: "Payment Type"
+    key: "paymentType"
+    type: "select"
+    defaultOptions:
+      - key: "PRE-ORDER"
+        value: "PRE-ORDER"
+      - key: "PRE-FULFILLMENT"
+        value: "PRE-FULFILLMENT"
+      - key: "ON-FULFILLMENT"
+        value: "ON-FULFILLMENT"
+      - key: "POST-FULFILLMENT"
+        value: "POST-FULFILLMENT"
+      - key: "ON-ORDER"
+        value: "ON-ORDER"
+    errorText: "Please select a field"
+  - name: "Bank Code"
+    key: "bankCode"
+    type: "text"
+    errorText: "Bank Code is required"
+  - name: "Bank Account Number"
+    key: "bankAccountNumber"
+    type: "text"
+    errorText: "Bank Account Number is required"
+  - name: "Virtual Payment Address"
+    key: "virtualPaymentAddress"
+    type: "text"
+    errorText: "Virtual Payment Address is required"
+  - name: "Payment Tags"
+    key: "paymentTagsInit"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment Tags is required"
+
+confirm:
+  - name: "Payment Id"
+    key: "paymentId"
+    type: "text"
+    errorText: "Payment Id is required"
+  - name: "Payment Status"
+    key: "paymentStatusConfirm"
+    type: "text"
+    errorText: "Payment Status is required"
+  - name: "Payment Type"
+    key: "paymentTypeConfirm"
+    type: "text"
+    errorText: "Payment Type is required"
+  - name: "Payment Tags"
+    key: "paymentTagsConfirm"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment Tags is required"
+
+status:
+  - name: "Order Id"
+    key: "orderId"
+    type: "text"
+    errorText: "Order Id is required"
