@@ -18,6 +18,7 @@ class ConfigLoader {
 
       this.config = schema;
 
+      console.log("schema", schema);
       return schema;
     } catch (e) {
       throw new Error(e);
@@ -26,6 +27,30 @@ class ConfigLoader {
 
   getConfig() {
     return this.config;
+  }
+
+  getConfigBasedOnFlow(flowId) {
+    let filteredInput = null;
+    let filteredCalls = null;
+    let filteredDomain = null;
+    let filteredSessiondata = null;
+
+    this.config.flows.forEach((flow) => {
+      if (flow.id === flowId) {
+        const { input, calls, domain, sessionData } = flow;
+        filteredInput = input;
+        filteredCalls = calls;
+        filteredDomain = domain;
+        filteredSessiondata = sessionData;
+      }
+    });
+
+    return {
+      filteredCalls,
+      filteredInput,
+      filteredDomain,
+      filteredSessiondata,
+    };
   }
 }
 

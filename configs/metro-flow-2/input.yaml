@@ -8,7 +8,7 @@ search_route:
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_TYPE: percent
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
@@ -42,16 +42,6 @@ search_trip:
     errorText: "End stop is required"
 
 init:
-  - name: "BPP URI"
-    key: "bpp_uri"
-    type: "select"
-    extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
-    errorText: "BPP URI is required"
-  - name: "BPP ID"
-    key: "bpp_id"
-    type: "select"
-    extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
-    errorText: "BPP ID is required"
   - name: "Item id"
     key: "itemId"
     type: "select"
@@ -82,10 +72,6 @@ init:
     key: "phone"
     type: "text"
     errorText: "Phone is required"
-  - name: "Collected By"
-    key: "collectedBy"
-    type: "text"
-    errorText: "Collected By is required"
   - name: "Payment Status"
     key: "paymentStatus"
     type: "select"
@@ -98,6 +84,7 @@ init:
   - name: "Payment Type"
     key: "paymentType"
     type: "select"
+    defaultValue: "PRE-ORDER"
     defaultOptions:
       - key: "PRE-ORDER"
         value: "PRE-ORDER"
@@ -110,24 +97,12 @@ init:
       - key: "ON-ORDER"
         value: "ON-ORDER"
     errorText: "Please select a field"
-  - name: "Bank Code"
-    key: "bankCode"
-    type: "text"
-    errorText: "Bank Code is required"
-  - name: "Bank Account Number"
-    key: "bankAccountNumber"
-    type: "text"
-    errorText: "Bank Account Number is required"
-  - name: "Virtual Payment Address"
-    key: "virtualPaymentAddress"
-    type: "text"
-    errorText: "Virtual Payment Address is required"
   - name: "Payment Tags"
     key: "paymentTagsInit"
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_TYPE: percent
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
@@ -139,10 +114,6 @@ confirm:
     key: "paymentId"
     type: "text"
     errorText: "Payment Id is required"
-  - name: "Collected By"
-    key: "collectedByConfirm"
-    type: "text"
-    errorText: "Collected By is required"
   - name: "Payment Status"
     key: "paymentStatusConfirm"
     type: "select"
@@ -154,6 +125,7 @@ confirm:
   - name: "Payment Type"
     key: "paymentTypeConfirm"
     type: "select"
+    defaultValue: "PRE-ORDER"
     defaultOptions:
       - key: "PRE-ORDER"
         value: "PRE-ORDER"
@@ -183,7 +155,7 @@ confirm:
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_TYPE: percent
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
