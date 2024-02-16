@@ -119,19 +119,19 @@ protocol:
       - beckn_key: message.order.billing.email
         value: data.email
       - beckn_key: message.order.billing.phone
-        value: data.phone
+        value: session.phone
       - beckn_key: message.order.payments[0].collected_by
-        value: data.collectedBy
+        value: session.collectedBy
       - beckn_key: message.order.payments[0].status
         value: data.paymentStatus
       - beckn_key: message.order.payments[0].type
         value: data.paymentType
       - beckn_key: message.order.payments[0].params.bank_code
-        value: data.bankCode
+        value: session.bankCode
       - beckn_key: message.order.payments[0].params.bank_account_number
-        value: data.bankAccountNumber
+        value: session.bankAccountNumber
       - beckn_key: message.order.payments[0].params.virtual_payment_address
-        value: data.virtualPaymentAddress
+        value: session.virtualPaymentAddress
       - beckn_key: message.order.payments[0].tags
         value: data.paymentTagsInit
         compute: buildTags(data.paymentTagsInit)
@@ -182,7 +182,7 @@ protocol:
       - beckn_key: message.order.payments[0].id
         value: data.paymentId
       - beckn_key: message.order.payments[0].collected_by
-        value: data.collectedByConfirm
+        value: session.collectedBy
       - beckn_key: message.order.payments[0].status
         value: data.paymentStatusConfirm
       - beckn_key: message.order.payments[0].type

@@ -161,10 +161,6 @@ router.delete("/cache",(req,res)=>{
 
 router.post("/mapper/session", (req, res) => {
   const {
-    bap_id,
-    bap_uri,
-    domain,
-    ttl,
     version,
     country,
     cityCode,
@@ -174,10 +170,6 @@ router.post("/mapper/session", (req, res) => {
 
 
   if (
-    !bap_id ||
-    !bap_uri ||
-    !domain ||
-    !ttl ||
     !version ||
     !country ||
     !cityCode ||
@@ -185,31 +177,26 @@ router.post("/mapper/session", (req, res) => {
     !configName
   ) {
     return res.status(400).send({
-      data: "validations failed  bap_id || bap_uri || domain || ttl || version || country || cityCode || transaction_id || configName missing",
+      data: "validations failed version || country || cityCode || transaction_id || configName missing",
     });
   }
 
   console.log("body>>>>>", req.body)
 
   try {
-    const protocolCalls = fs.readFileSync(
-      path.join(__dirname, "../", "configs", req.body.configName, "protocolCalls.yaml"),
-      "utf8"
-    );
-    const parsedProtocolCalls = yaml.load(protocolCalls);
-
-    const input = fs.readFileSync(
-      path.join(__dirname, "../", "configs", req.body.configName, "input.yaml"),
-      "utf8"
-    );
-    const parsedInput = yaml.load(input);
+    const {filteredCalls, filteredInput, filteredDomain, filteredSessiondata} = configLoader.getConfigBasedOnFlow(configName)
 
     const session = {
       ...req.body,
-      input: parsedInput,
+      bap_id: "mobility-staging.ondc.org",
+      bap_uri: process.env.callbackUrl,
+      ttl: "PT10M",
+      domain: filteredDomain,
+      ...filteredSessiondata,
       currentTransactionId: transaction_id,
       transactionIds: [transaction_id],
-      protocolCalls: parsedProtocolCalls,
+      input: filteredInput,
+      protocolCalls: filteredCalls,
     };
 
     // console.log("crfeating session", session)
