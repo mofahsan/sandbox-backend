@@ -46,3 +46,13 @@ flows:
       $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/ondemand-flow-1/protocolCalls.yaml
+  - summary: Intercity   
+    domain: ONDC:TRV12
+    id: 
+     input:
+      $ref: ./configs/intercity/input.yaml
+    protocol:
+      $ref: ./configs/intercity/protocolMapping.yaml
+    calls:
+      $ref: ./configs/intercity/protocolCalls.yaml
+
