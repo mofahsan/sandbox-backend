@@ -1,0 +1,54 @@
+search_route:
+  - name: "Start stop"
+    key: "startStop"
+    type: "text"
+    extractionPath: "businessPayload[?(bpp_id === '${bpp_id}')].location[]{key: locationName, value: locationName}"
+    extractionPathReplace: "${bpp_id}"
+    error: "Start stop is required"
+  - name: "End stop"
+    key: "endStop"
+    type: "text"
+    extractionPath: "businessPayload[?(bpp_id === '${bpp_id}')].location[]{key: locationName, value: locationName}"
+    extractionPathReplace: "${bpp_id}"
+    error: "End stop is required"
+  - name: "Vehicle Category"
+    key: "vehicleCategaory"
+    type: "text"
+    errorText: "Vehicle category is required"
+  - name: "Payment Tags"
+    key: "paymentTagsSearch"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment tags is required"  
+
+
+select:    
+  - name: "Item id"
+    key: "itemId"
+    type: "text"
+    errorText: "Item id is required"
+  - name: "Quantity"
+    key: "quantity"
+    type: "text"
+    errorText: "Quantity is required"
+  - name: "Provider id"
+    key: "providerId"
+    type: "text"
+    errorText: "Provider id is required"
+  - name: " Tags"
+    key: "Tags"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment tags is required"    
