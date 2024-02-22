@@ -16,7 +16,7 @@ const {
   createHeaderFromId,
   handleRequestForJsonMapper
 } = require("../utils/utils");
-const {createBecknObject, extractBusinessData} = require('../utils/buildPayload')
+const {createBecknObject} = require('../utils/buildPayload')
 const {apiResponse} = require("../utils/response")
 const {createHeader} = require("../header")
 const {extractPath} = require("../utils/buildPayload")
@@ -254,6 +254,52 @@ router.post("/mapper/extractPath", (req, res) => {
     res.status(400).send({ error: true, data: e });
   }
 });
+
+router.post("/mapper/repeat", async (req, res) => {
+  const {transactionId, callType} = req.body
+
+  if(!transactionId || !callType) {
+    return res.status(400).send({data: "missing transactionId || callType"})
+  }
+
+  let session = getCache("jm_" + transactionId);
+
+  if(!session) {
+    return res.status(400).send({data: "No session found."})
+  }
+
+  const newProtocolCall = {}
+  let foundCall = false
+
+  Object.entries(session.protocolCalls).map(item => {
+    const [key, call] = item
+
+    if(foundCall) {
+      call.becknPayload = null
+      call.businessPayload = null
+      call.messageId = null
+      call.executed = false
+      call.shouldRender = false
+    }
+
+    if(call.type === callType) {
+      call.becknPayload = null
+      call.businessPayload = null
+      call.messageId = null
+      call.executed = false
+      call.shouldRender = true
+
+      foundCall = true
+    }
+
+    newProtocolCall[key] = call
+  })
+
+  session.protocolCalls = newProtocolCall
+  insertSession(session)
+
+  res.send({session})
+})
 
 router.post("/mapper/:config", async (req, res) => {
   const { transactionId, payload } = req.body;

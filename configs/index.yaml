@@ -17,12 +17,26 @@ flows:
   - summary: metro complete flow
     id: metro-flow-1
     domain: ONDC:TRV11
+    sessionData:
+      collectedBy: BAP
+      bankAccountNumber: "123456789"
+      virtualPaymentAddress: "adasd@okiciic"
+      bankCode: "fj3jf9ij3f02"
     input:
       $ref: ./configs/metro-flow-1/input.yaml
     protocol:
       $ref: ./configs/metro-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/metro-flow-1/protocolCalls.yaml
+  - summary: metro cancel flow
+    id: metro-cancel-flow-1
+    domain: ONDC:TRV11
+    input:
+      $ref: ./configs/metro-cancel-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/metro-cancel-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/metro-cancel-flow-1/protocolCalls.yaml
   - summary: metro flow without select call
     id: metro-flow-2
     domain: ONDC:TRV11

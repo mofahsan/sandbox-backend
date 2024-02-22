@@ -272,12 +272,23 @@ const createBecknObject = (session, call, data) => {
 const extractBusinessData = (type, payload, session) => {
   const parsedYaml = yaml.load(getYamlConfig(session.configName));
 
+  if (parsedYaml.protocol[type].sessionData) {
+    const parsedSchema = createBusinessPayload(
+      parsedYaml.protocol[type].sessionData,
+      payload
+    );
+
+    console.log("parsedSchaems", parsedSchema);
+
+    session = { ...session, ...parsedSchema };
+  }
+
   const result = createBusinessPayload(
     parsedYaml.protocol[type].mapping,
     payload
   );
 
-  return result;
+  return { result, session };
 };
 
 const extractPath = (path, obj) => {
