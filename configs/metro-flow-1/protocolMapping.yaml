@@ -265,16 +265,68 @@ protocol:
       - beckn_key: message.order_id
         value: data.orderId
 
-  on_search_route:
+
+  on_search:
     mapping:
-      - business_key: "name"
-        extractionPath: message.catalog.descriptor.name
-      - business_key: "bpp_id"
-        extractionPath: context.bpp_id
-      - business_key: "bpp_uri"
-        extractionPath: context.bpp_uri
-      - business_key: "location"
-        extractionPath: "message.catalog.providers[].fulfillments[].stops[]{locationName: location.descriptor.code}"
+      - beckn_key: context.bap_id
+        value: session.bap_id
+      - beckn_key: context.bap_uri
+        value: session.bap_uri
+      - beckn_key: context.location.country.code
+        value: session.country
+      - beckn_key: context.location.city.code
+        value: session.cityCode
+      - beckn_key: context.transaction_id
+        value: session.currentTransactionId
+      - beckn_key: context.message_id
+        value: messageId
+      - beckn_key: context.timestamp
+        value: timestamp
+      - beckn_key: context.domain
+        value: session.domain
+      - beckn_key: context.version
+        value: session.version
+      - beckn_key: context.ttl
+        value: session.ttl
+      - beckn_key: context.action
+        value: action
+
+
+      - beckn_key: message.catalog.descriptor.name
+        value: data.name
+      - beckn_key: message.catalog.descriptor.images
+        value: data.images
+      - beckn_key: message.catalog.providers[0].id
+        value: data.providers_id
+      - beckn_key: message.catalog.providers[0].descriptor.images
+        value: data.providers_images
+      - beckn_key: message.catalog.providers[0].descriptor.name
+        value: data.providers_name
+      - beckn_key: message.catalog.providers[0].categories
+        value: data.providers_categories
+      - beckn_key: message.catalog.providers[0].items
+        value: data.items
+      - beckn_key: message.catalog.providers[0].fulfillments
+        value: data.fulfillments
+      - beckn_key: message.catalog.providers[0].time
+        value: data.time
+      - beckn_key: message.catalog.providers[0].payments
+        value: data.payments_tags
+        compute: buildTags(data.payments_tags)
+      - beckn_key: message.catalog.providers[0].tags
+        value: data.tags
+        compute: buildTags(data.tags)
+
+      - beckn_key: message.catalog.providers[0].payments.collected_by
+        value: data.payment_colledtedby
+
+        
+      # - business_key: "bpp_id"
+      #   extractionPath: context.bpp_id
+      # - business_key: "bpp_uri"
+      #   extractionPath: context.bpp_uri
+      # - business_key: "location"
+      #   extractionPath: "message.catalog.providers[].fulfillments[].stops[]{locationName: location.descriptor.code}"
 
   on_search_trip:
     mapping:
@@ -289,24 +341,249 @@ protocol:
 
   on_select:
     mapping:
-      - business_key: breakup
-        extractionPath: "message.order.quote.breakup[]{type: title, totalPrice: price.value, UOP: price.currency}"
+      - beckn_key: context.bap_id
+        value: session.bap_id
+      - beckn_key: context.bap_uri
+        value: session.bap_uri
+      - beckn_key: context.bpp_id
+        value: session.bpp_id
+      - beckn_key: context.bpp_uri
+        value: session.bpp_uri
+      - beckn_key: context.location.country.code
+        value: session.country
+      - beckn_key: context.location.city.code
+        value: session.cityCode
+      - beckn_key: context.transaction_id
+        value: session.currentTransactionId
+      - beckn_key: context.message_id
+        value: messageId
+      - beckn_key: context.timestamp
+        value: timestamp
+      - beckn_key: context.domain
+        value: session.domain
+      - beckn_key: context.version
+        value: session.version
+      - beckn_key: context.ttl
+        value: session.ttl
+      - beckn_key: context.action
+        value: action
+
+      - beckn_key: message.order.items
+        value: data.items     
+
+      - beckn_key: message.order.provider.id
+        value: data.provider_id     
+
+      - beckn_key: message.order.provider.descriptor.name
+        value: data.provider_descriptor_name   
+      - beckn_key: message.order.provider.descriptor.images
+        value: data.provider_descriptor_images   
+      - beckn_key: message.order.provider.time
+        value: data.provider_time
+
+      - beckn_key: message.order.fulfillments
+        value: data.fulfillments
+      - beckn_key: message.order.quote.price.value
+        value: data.quoted_price
+      - beckn_key: message.order.quote.price.currency
+        value: data.currency
+      - beckn_key: message.order.cancellation_terms
+        value: data.cancellation_terms
+      - beckn_key: message.order.tags
+        value: data.tags
+        compute: buildTags(data.tags)
 
   on_init:
     mapping:
-      - business_key: paymentDetails
-        extractionPath: "message.order.payments[]{id: id, type: type, status: status}"
+      - beckn_key: context.bap_id
+        value: session.bap_id
+      - beckn_key: context.bap_uri
+        value: session.bap_uri
+      - beckn_key: context.bpp_id
+        value: session.bpp_id
+      - beckn_key: context.bpp_uri
+        value: session.bpp_uri
+      - beckn_key: context.location.country.code
+        value: session.country
+      - beckn_key: context.location.city.code
+        value: session.cityCode
+      - beckn_key: context.transaction_id
+        value: session.currentTransactionId
+      - beckn_key: context.message_id
+        value: messageId
+      - beckn_key: context.timestamp
+        value: timestamp
+      - beckn_key: context.domain
+        value: session.domain
+      - beckn_key: context.version
+        value: session.version
+      - beckn_key: context.ttl
+        value: session.ttl
+      - beckn_key: context.action
+        value: action
+
+      - beckn_key: message.order.items
+        value: data.items   
+
+      - beckn_key: message.order.provider.id
+        value: data.provider_id     
+      - beckn_key: message.order.provider.descriptor.name
+        value: data.provider_descriptor_name   
+      - beckn_key: message.order.provider.descriptor.images
+        value: data.provider_descriptor_images   
+      - beckn_key: message.order.provider.time
+        value: data.provider_time
+      - beckn_key: message.order.fulfillments
+        value: data.fulfillments
+
+      - beckn_key: message.order.quote.price.value
+        value: data.quoted_price
+      - beckn_key: message.order.quote.price.currency
+        value: data.currency
+      - beckn_key: message.order.quote.breakup
+        value: data.breakup
+      - beckn_key: message.order.cancellation_terms
+        value: data.cancellation_terms
+      - beckn_key: message.order.tags
+        value: data.tags
+        compute: buildTags(data.tags)
+
+      - beckn_key: message.order.payments.id
+        value: data.payments_id
+      - beckn_key: message.order.payments.collected_by
+        value: data.payments_collected-by
+      - beckn_key: message.order.payments.status
+        value: data.payments-status
+      - beckn_key: message.order.payments.type
+        value: data.payments_type
+      - beckn_key: message.order.payments.bank_code
+        value: data.payments_bank-code
+      - beckn_key: message.order.payments.bank_account_number
+        value: data.payments_bank-account-number
+      - beckn_key: message.order.payments.bank_virtual_payment_address
+        value: data.payments_virtual-payment-address
+      - beckn_key: message.order.payments.tags
+        value: data.payments_tags
+        compute: buildTags(data.payments_tags)
+
 
   on_confirm:
     mapping:
-      - business_key: "orderId"
-        extractionPath: message.order.id
-      - business_key: "status"
-        extractionPath: message.order.status
-      - business_key: "QR code"
-        extractionPath: 'message.order.fulfillments[]{providerId: id}.stops[?(type === "START")]{token: authorization.token, status: authorization.status}'
+      - beckn_key: context.bap_id
+        value: session.bap_id
+      - beckn_key: context.bap_uri
+        value: session.bap_uri
+      - beckn_key: context.bpp_id
+        value: session.bpp_id
+      - beckn_key: context.bpp_uri
+        value: session.bpp_uri
+      - beckn_key: context.location.country.code
+        value: session.country
+      - beckn_key: context.location.city.code
+        value: session.cityCode
+      - beckn_key: context.transaction_id
+        value: session.currentTransactionId
+      - beckn_key: context.message_id
+        value: messageId
+      - beckn_key: context.timestamp
+        value: timestamp
+      - beckn_key: context.domain
+        value: session.domain
+      - beckn_key: context.version
+        value: session.version
+      - beckn_key: context.ttl
+        value: session.ttl
+      - beckn_key: context.action
+        value: action
+
+      - beckn_key: message.order.id
+        value: data.id     
+      - beckn_key: message.order.status
+        value: data.status
+      - beckn_key: message.order.items
+        value: data.items     
+
+      - beckn_key: message.order.provider.id
+        value: data.provider_id     
+      - beckn_key: message.order.provider.descriptor.name
+        value: data.provider_descriptor_name   
+      - beckn_key: message.order.provider.descriptor.images
+        value: data.provider_descriptor_images   
+      - beckn_key: message.order.provider.time.range.start
+        value: data.provider_time_range_start
+      - beckn_key: message.order.provider.time.range.end
+        value: data.provider_time_range_end
+
+      - beckn_key: message.order.fulfillments
+        value: data.fulfillments
+
+
+
+      - beckn_key: message.order.billing.name
+        value: data.billing_name
+      - beckn_key: message.order.billing.email
+        value: data.billing_email
+      - beckn_key: message.order.billing.phone
+        value: data.billing_phone
+
+      - beckn_key: message.order.quote.price.value
+        value: data.quoted_price
+      - beckn_key: message.order.quote.price.currency
+        value: data.currency
+      - beckn_key: message.order.quote.breakup
+        value: data.breakup
+
+      - beckn_key: message.catalog.providers[0].payments
+        value: data.payments_tags
+        compute: buildTags(data.payments_tags)
+
+      - beckn_key: message.order.payments.id
+        value: data.payments_id
+      - beckn_key: message.order.payments.collected_by
+        value: data.payments_collected-by
+      - beckn_key: message.order.payments.status
+        value: data.payments-status
+      - beckn_key: message.order.payments.type
+        value: data.payments_type
+      - beckn_key: message.order.payments.bank_code
+        value: data.payments_bank-code
+      - beckn_key: message.order.payments.bank_account_number
+        value: data.payments_bank-account-number
+      - beckn_key: message.order.payments.bank.virtual_payment_address
+        value: data.payments_virtual-payment-address
+
+      - beckn_key: message.order.payments.params.transaction_id
+        value: session.currentTransactionId
+
+      - beckn_key: message.order.payments.params.currency
+        value: data.currency
+
+      - beckn_key: message.order.payments.bank_virtual_payment_address
+        value: data.data.quoted_price
+
+        
+      - beckn_key: message.order.payments.tags
+        value: data.payments_tags
+        compute: buildTags(data.payments_tags)
+
+      - beckn_key: message.order.tags
+        value: data.tags
+        compute: buildTags(data.tags)    
+
+
+
+      - beckn_key: message.order.created_at
+        value: data.created_at
+      - beckn_key: message.order.payments.updated_at
+        value: data.updated_at
+
+
+
+
 
   on_status:
     mapping:
       - business_key: "status"
         extractionPath: message.order.status
+
+

@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { configLoader } = require("./configs/index");
 
+
 configLoader
   .init()
   .then((data) => {
@@ -20,8 +21,12 @@ configLoader
 
     app.listen(PORT, () => {
       console.log("server listening at port " + PORT);
+      require("./createSession")
+
     });
   })
   .catch((e) => {
     console.error("Error loading config file:", e);
   });
+
+  
