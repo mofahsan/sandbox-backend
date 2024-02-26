@@ -1,0 +1,21 @@
+cancel:
+  type: "cancel"
+  executed: false
+  shouldRender: true
+  config: "cancel"
+  nextRequest: "on_cancel"
+  preRequest: null
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/cancel
+
+on_cancel:
+  type: "on_cancel"
+  executed: false
+  shouldRender: false
+  config: "on_cancel"
+  nextRequest: null
+  preRequest: "cancel"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_cancel

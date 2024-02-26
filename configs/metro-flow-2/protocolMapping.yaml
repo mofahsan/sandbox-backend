@@ -252,6 +252,9 @@ protocol:
         extractionPath: "message.catalog.providers[]{providerId: id}.items[]{id: id, name: descriptor.name}"
 
   on_init:
+    sessionData:
+      - business_key: paymentID
+        extractionPath: "message.order.payments[]{id: id}"
     mapping:
       - business_key: paymentDetails
         extractionPath: "message.order.payments[]{id: id, type: type, status: status}"

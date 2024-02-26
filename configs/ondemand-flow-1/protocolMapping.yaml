@@ -105,6 +105,9 @@ protocol:
       - beckn_key: message.order.provider.id
         value: session.providerId
 
+      - beckn_key: message.order.fulfillments
+        value: session.fulfillmentData
+
       - beckn_key: message.order.billing.name
         value: data.name
       - beckn_key: message.order.fulfillments[0].customer.contact.phone
@@ -162,6 +165,9 @@ protocol:
         value: session.quantitySelected
       - beckn_key: message.order.provider.id
         value: session.providerId
+
+      - beckn_key: message.order.fulfillments
+        value: session.fulfillmentData
 
       - beckn_key: message.order.billing.name
         value: session.name
@@ -226,16 +232,23 @@ protocol:
         extractionPath: "message.catalog.providers[]{providerId: id}.items[]{itemId: id, rideName: descriptor.name, rideCode: descriptor.code}"
 
   on_select:
+    sessionData:
+      - business_key: fulfillmentData
+        extractionPath: "message.order.fulfillments[]{id: id, stops: stops, vehicle: vehicle}"
     mapping:
       - business_key: breakup
         extractionPath: "message.order.quote.breakup[]{type: title, proce: price.value, UOP: price.currency}"
       - business_key: totalPrice
         extractionPath: "message.order.quote.price"
+      - business_key: error
+        extractionPath: error
 
   on_init:
     mapping:
       - business_key: paymentDetails
         extractionPath: "message.order.payments[]{id: id, type: type, status: status}"
+      - business_key: error
+        extractionPath: error
 
   on_confirm:
     mapping:
@@ -245,6 +258,8 @@ protocol:
         extractionPath: message.order.status
       - business_key: "Authorisation"
         extractionPath: 'message.order.fulfillments[].stops[?(type === "START")]{token: authorization.token, type: authorization.type}'
+      - business_key: error
+        extractionPath: error
 
   on_update:
     mapping:
@@ -252,8 +267,12 @@ protocol:
         extractionPath: message.order.id
       - business_key: "status"
         extractionPath: message.order.status
+      - business_key: error
+        extractionPath: error
 
   on_status:
     mapping:
       - business_key: "status"
         extractionPath: message.status
+      - business_key: error
+        extractionPath: error
