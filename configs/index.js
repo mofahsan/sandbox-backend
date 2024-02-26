@@ -34,14 +34,16 @@ class ConfigLoader {
     let filteredCalls = null;
     let filteredDomain = null;
     let filteredSessiondata = null;
+    let filteredAdditionalFlows = null;
 
     this.config.flows.forEach((flow) => {
       if (flow.id === flowId) {
-        const { input, calls, domain, sessionData } = flow;
+        const { input, calls, domain, sessionData, additioalFlows } = flow;
         filteredInput = input;
         filteredCalls = calls;
         filteredDomain = domain;
         filteredSessiondata = sessionData;
+        filteredAdditionalFlows = additioalFlows || [];
       }
     });
 
@@ -50,6 +52,7 @@ class ConfigLoader {
       filteredInput,
       filteredDomain,
       filteredSessiondata,
+      filteredAdditionalFlows,
     };
   }
 }

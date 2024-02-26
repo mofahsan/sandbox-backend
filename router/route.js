@@ -184,7 +184,13 @@ router.post("/mapper/session", (req, res) => {
   console.log("body>>>>>", req.body)
 
   try {
-    const {filteredCalls, filteredInput, filteredDomain, filteredSessiondata} = configLoader.getConfigBasedOnFlow(configName)
+    const {
+      filteredCalls,
+      filteredInput,
+      filteredDomain,
+      filteredSessiondata,
+      filteredAdditionalFlows,
+    } = configLoader.getConfigBasedOnFlow(configName);
 
     const session = {
       ...req.body,
@@ -197,6 +203,7 @@ router.post("/mapper/session", (req, res) => {
       transactionIds: [transaction_id],
       input: filteredInput,
       protocolCalls: filteredCalls,
+      additioalFlows: filteredAdditionalFlows
     };
 
     // console.log("crfeating session", session)
@@ -301,6 +308,25 @@ router.post("/mapper/repeat", async (req, res) => {
   res.send({session})
 })
 
+router.post("/mapper/addFlow", (req, res) => {
+  const {configName, transactionId} = req.body
+
+  let session = getCache("jm_" + transactionId);
+
+  if(!session) {
+    return res.status(400).send({data: "No session found."})
+  }
+
+  const {filteredCalls, filteredInput} = configLoader.getConfigBasedOnFlow(configName)
+
+  session.protocolCalls = {...session.protocolCalls, ...filteredCalls}
+  session.input = {...session.input, ...filteredInput}
+
+  insertSession(session)
+
+  res.send({session})
+})
+
 router.post("/mapper/:config", async (req, res) => {
   const { transactionId, payload } = req.body;
   const config = req.params.config;
@@ -314,11 +340,11 @@ router.post("/mapper/:config", async (req, res) => {
     const {payload: becknPayload, session: updatedSession} = createBecknObject(
       session,
       session.protocolCalls[config],
-      payload
+      payload,
+      session.protocolCalls[config].protocol
     );
 
     session = updatedSession
-
     insertRequest(becknPayload, null);
     session.protocolCalls[config] = {
       ...session.protocolCalls[config],

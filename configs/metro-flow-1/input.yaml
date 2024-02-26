@@ -3,6 +3,8 @@ search_route:
     key: "vehicleCategaory"
     type: "text"
     errorText: "Vehicle category is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Tags"
     key: "paymentTagsSearch"
     type: "multiline"
@@ -14,6 +16,8 @@ search_route:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment tags is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
 
 search_trip:
   - name: "BPP URI"
@@ -21,11 +25,15 @@ search_trip:
     type: "select"
     extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
     errorText: "BPP URI is required"
+    required: true
+    summary: BPP URI is the base url for the seller endpoints
   - name: "BPP ID"
     key: "bpp_id"
     type: "select"
     extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
     errorText: "BPP ID is required"
+    required: true
+    summary: BPP ID is the uniqure id of the seller
   - name: "Start stop"
     key: "startStop"
     type: "select"
@@ -33,6 +41,8 @@ search_trip:
     extractionPathReplace: "${bpp_id}"
     extractionPathReplaceWith: formData.bpp_id
     errorText: "Start stop is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "End stop"
     key: "endStop"
     type: "select"
@@ -40,18 +50,10 @@ search_trip:
     extractionPathReplace: "${bpp_id}"
     extractionPathReplaceWith: formData.bpp_id
     errorText: "End stop is required"
+    required: true
+    summary: Starting stop of the journey location
 
 select:
-  - name: "BPP URI"
-    key: "bpp_uri"
-    type: "select"
-    extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
-    errorText: "BPP URI is required"
-  - name: "BPP ID"
-    key: "bpp_id"
-    type: "select"
-    extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
-    errorText: "BPP ID is required"
   - name: "Item id"
     key: "itemId"
     type: "select"
@@ -59,10 +61,14 @@ select:
     extractionPathReplace: "${bpp_id}"
     extractionPathReplaceWith: formData.bpp_id
     errorText: "Item id is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Quantity"
     key: "quantity"
     type: "text"
     errorText: "Quantity is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Provider id"
     key: "providerId"
     type: "select"
@@ -70,24 +76,28 @@ select:
     extractionPathReplace: "${bpp_id}"
     extractionPathReplaceWith: formData.bpp_id
     errorText: "Provider id is required"
+    required: true
+    summary: Starting stop of the journey location
 
 init:
   - name: "Name"
     key: "name"
     type: "text"
     errorText: "Name is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Email"
     key: "email"
     type: "text"
     errorText: "Email is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Phone"
     key: "phone"
     type: "text"
     errorText: "Phone is required"
-  - name: "Collected By"
-    key: "collectedBy"
-    type: "text"
-    errorText: "Collected By is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Status"
     key: "paymentStatus"
     type: "select"
@@ -97,9 +107,12 @@ init:
       - key: "NOT-PAID"
         value: "NOT-PAID"
     errorText: "Please select a field"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Type"
     key: "paymentType"
     type: "select"
+    defaultValue: "PRE-ORDER"
     defaultOptions:
       - key: "PRE-ORDER"
         value: "PRE-ORDER"
@@ -112,18 +125,8 @@ init:
       - key: "ON-ORDER"
         value: "ON-ORDER"
     errorText: "Please select a field"
-  - name: "Bank Code"
-    key: "bankCode"
-    type: "text"
-    errorText: "Bank Code is required"
-  - name: "Bank Account Number"
-    key: "bankAccountNumber"
-    type: "text"
-    errorText: "Bank Account Number is required"
-  - name: "Virtual Payment Address"
-    key: "virtualPaymentAddress"
-    type: "text"
-    errorText: "Virtual Payment Address is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Tags"
     key: "paymentTagsInit"
     type: "multiline"
@@ -135,36 +138,64 @@ init:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
+    required: true
+    summary: Starting stop of the journey location
 
 confirm:
   - name: "Payment Id"
     key: "paymentId"
     type: "text"
     errorText: "Payment Id is required"
-  - name: "Collected By"
-    key: "collectedByConfirm"
-    type: "text"
-    errorText: "Collected By is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Status"
-    key: "paymentStatusConfirm"
-    type: "text"
-    errorText: "Payment Status is required"
+    key: "paymentStatus"
+    type: "select"
+    defaultOptions:
+      - key: "PAID"
+        value: "PAID"
+      - key: "NOT-PAID"
+        value: "NOT-PAID"
+    errorText: "Please select a field"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Type"
-    key: "paymentTypeConfirm"
-    type: "text"
-    errorText: "Payment Type is required"
+    key: "paymentType"
+    type: "select"
+    defaultValue: "PRE-ORDER"
+    defaultOptions:
+      - key: "PRE-ORDER"
+        value: "PRE-ORDER"
+      - key: "PRE-FULFILLMENT"
+        value: "PRE-FULFILLMENT"
+      - key: "ON-FULFILLMENT"
+        value: "ON-FULFILLMENT"
+      - key: "POST-FULFILLMENT"
+        value: "POST-FULFILLMENT"
+      - key: "ON-ORDER"
+        value: "ON-ORDER"
+    errorText: "Please select a field"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Transcation Id"
     key: "paymentTranscationId"
     type: "text"
     errorText: "Transcation Id is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Amount"
     key: "amount"
     type: "text"
     errorText: "Amount is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Currency"
     key: "currency"
     type: "text"
+    defaultValue: INR
     errorText: "Currency is required"
+    required: true
+    summary: Starting stop of the journey location
   - name: "Payment Tags"
     key: "paymentTagsConfirm"
     type: "multiline"
@@ -176,9 +207,13 @@ confirm:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
+    required: true
+    summary: Starting stop of the journey location
 
 status:
   - name: "Order Id"
     key: "orderId"
     type: "text"
     errorText: "Order Id is required"
+    required: true
+    summary: Starting stop of the journey location

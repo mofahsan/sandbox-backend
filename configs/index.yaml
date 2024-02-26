@@ -28,7 +28,11 @@ flows:
       $ref: ./configs/metro-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/metro-flow-1/protocolCalls.yaml
+    additioalFlows:
+      - key: metro cancel flow
+        value: metro-cancel-flow-1
   - summary: metro cancel flow
+    shouldDispaly: false # check
     id: metro-cancel-flow-1
     domain: ONDC:TRV11
     input:

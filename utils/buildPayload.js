@@ -72,6 +72,7 @@ const createPayload = (config, action, data, session) => {
   const payload = {};
   const startPoint = "START";
   const endPoint = "END";
+  const cancelName = "Ride Cancellation";
   const messageId = uuidv4();
   const paymentId = uuidv4();
   const timestamp = new Date().toISOString();
@@ -251,9 +252,9 @@ const createBusinessPayload = (myconfig, obj) => {
   }
 };
 
-const createBecknObject = (session, call, data) => {
-  const parsedYaml = yaml.load(getYamlConfig(session.configName));
-  const config = parsedYaml.protocol[call.config];
+const createBecknObject = (session, call, data, protocol) => {
+  // const parsedYaml = yaml.load(getYamlConfig(session.configName));
+  const config = protocol;
   if (config.sessionData) {
     const updatedSession = createPayload(
       config.sessionData,
@@ -269,24 +270,18 @@ const createBecknObject = (session, call, data) => {
   return { payload, session };
 };
 
-const extractBusinessData = (type, payload, session) => {
-  const parsedYaml = yaml.load(getYamlConfig(session.configName));
+const extractBusinessData = (type, payload, session, protocol) => {
+  // const parsedYaml = yaml.load(getYamlConfig(session.configName));
 
-  if (parsedYaml.protocol[type].sessionData) {
-    const parsedSchema = createBusinessPayload(
-      parsedYaml.protocol[type].sessionData,
-      payload
-    );
+  if (protocol.sessionData) {
+    const parsedSchema = createBusinessPayload(protocol.sessionData, payload);
 
     console.log("parsedSchaems", parsedSchema);
 
     session = { ...session, ...parsedSchema };
   }
 
-  const result = createBusinessPayload(
-    parsedYaml.protocol[type].mapping,
-    payload
-  );
+  const result = createBusinessPayload(protocol.mapping, payload);
 
   return { result, session };
 };
