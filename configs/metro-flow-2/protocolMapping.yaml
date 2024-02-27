@@ -239,6 +239,8 @@ protocol:
         extractionPath: context.bpp_uri
       - business_key: "location"
         extractionPath: "message.catalog.providers[].fulfillments[].stops[]{locationName: location.descriptor.code}"
+      - business_key: error
+        extractionPath: error
 
   on_search_trip:
     mapping:
@@ -250,6 +252,8 @@ protocol:
         extractionPath: context.bpp_uri
       - business_key: "items"
         extractionPath: "message.catalog.providers[]{providerId: id}.items[]{id: id, name: descriptor.name}"
+      - business_key: error
+        extractionPath: error
 
   on_init:
     sessionData:
@@ -260,6 +264,8 @@ protocol:
         extractionPath: "message.order.payments[]{id: id, type: type, status: status}"
       - business_key: totalPrice
         extractionPath: "message.order.quote.price"
+      - business_key: error
+        extractionPath: error
 
   on_confirm:
     mapping:
@@ -269,8 +275,12 @@ protocol:
         extractionPath: message.order.status
       - business_key: "QR code"
         extractionPath: 'message.order.fulfillments[]{providerId: id}.stops[?(type === "START")]{token: authorization.token, status: authorization.status}'
+      - business_key: error
+        extractionPath: error
 
   on_status:
     mapping:
       - business_key: "status"
         extractionPath: message.order.status
+      - business_key: error
+        extractionPath: error

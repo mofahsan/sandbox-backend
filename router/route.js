@@ -190,6 +190,7 @@ router.post("/mapper/session", (req, res) => {
       filteredDomain,
       filteredSessiondata,
       filteredAdditionalFlows,
+      filteredsummary
     } = configLoader.getConfigBasedOnFlow(configName);
 
     const session = {
@@ -198,6 +199,7 @@ router.post("/mapper/session", (req, res) => {
       bap_uri: process.env.callbackUrl,
       ttl: "PT10M",
       domain: filteredDomain,
+      summary: filteredsummary,
       ...filteredSessiondata,
       currentTransactionId: transaction_id,
       transactionIds: [transaction_id],

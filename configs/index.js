@@ -35,15 +35,18 @@ class ConfigLoader {
     let filteredDomain = null;
     let filteredSessiondata = null;
     let filteredAdditionalFlows = null;
+    let filteredsummary = "";
 
     this.config.flows.forEach((flow) => {
       if (flow.id === flowId) {
-        const { input, calls, domain, sessionData, additioalFlows } = flow;
+        const { input, calls, domain, sessionData, additioalFlows, summary } =
+          flow;
         filteredInput = input;
         filteredCalls = calls;
         filteredDomain = domain;
         filteredSessiondata = sessionData;
         filteredAdditionalFlows = additioalFlows || [];
+        filteredsummary = summary;
       }
     });
 
@@ -53,6 +56,7 @@ class ConfigLoader {
       filteredDomain,
       filteredSessiondata,
       filteredAdditionalFlows,
+      filteredsummary,
     };
   }
 }

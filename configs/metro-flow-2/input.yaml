@@ -75,6 +75,7 @@ init:
   - name: "Payment Status"
     key: "paymentStatus"
     type: "select"
+    defaultValue: "NOT-PAID"
     defaultOptions:
       - key: "PAID"
         value: "PAID"
@@ -149,6 +150,7 @@ confirm:
   - name: "Currency"
     key: "currency"
     type: "text"
+    defaultValue: INR
     errorText: "Currency is required"
   - name: "Payment Tags"
     key: "paymentTagsConfirm"

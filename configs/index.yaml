@@ -14,7 +14,7 @@ server:
       bapId: "mobility-staging.ondc.org"
       uniqueKeyId: "UK-MOBILITY"
 flows:
-  - summary: metro complete flow
+  - summary: Metro - Station Code Based Flow
     id: metro-flow-1
     domain: ONDC:TRV11
     sessionData:
@@ -41,7 +41,7 @@ flows:
       $ref: ./configs/metro-cancel-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/metro-cancel-flow-1/protocolCalls.yaml
-  - summary: metro flow without select call
+  - summary: Metro - Station Code Based Flow(without select call)
     id: metro-flow-2
     domain: ONDC:TRV11
     sessionData:
