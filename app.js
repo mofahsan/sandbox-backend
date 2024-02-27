@@ -2,12 +2,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
+const logger = require("./utils/logger");
 const { configLoader } = require("./configs/index");
 
 configLoader
   .init()
   .then((data) => {
-    console.log("Config loaded successfully.");
+    logger.info("Config loaded successfully.");
 
     app.use(cors());
 
@@ -19,7 +20,7 @@ configLoader
     app.use(router);
 
     app.listen(PORT, () => {
-      console.log("server listening at port " + PORT);
+      logger.info("server listening at port " + PORT);
     });
   })
   .catch((e) => {

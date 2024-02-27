@@ -13,22 +13,14 @@ const {
   deleteCache,
   verifyHeader,
   insertSession,
-  createHeaderFromId,
   handleRequestForJsonMapper
 } = require("../utils/utils");
 const {createBecknObject} = require('../utils/buildPayload')
 const {apiResponse} = require("../utils/response")
-const {createHeader} = require("../header")
 const {extractPath} = require("../utils/buildPayload")
 const {configLoader} = require("../configs/index")
+const logger = require("../utils/logger")
 
-
-// console.log("config>>>>", JSON.stringify(configLoader.getConfig(), null, 2))
-//router.get("*",async(req,res)=>{
-//	console.log(req.url)
-//	res.send("server working")
-
-//})
 
 router.post("/createHeader", async function (req,res) {
   try {
@@ -37,7 +29,7 @@ router.post("/createHeader", async function (req,res) {
     res.setHeader("Access-Control-Expose-Headers","*")
       return res.send(req.body)
   } catch (error) {
-    console.error(error);
+    logger.error("/createHeader  -  ",error);
     res.status(500).send("an error occurred")
    
   }
@@ -69,17 +61,11 @@ router.post("/:method",async(req,res)=>{
         const response  =  await axios.post(`${url}${method}`,body,header)
         
 
-        // if(original_uri[original_uri.length-1]!="/"){ //"add / if not exists in bap uri"
-        //     original_uri=original_uri+"/"
-        //   }
-        // axios.post(`${original_uri}${response.data.context.action}`,response.data,{headers:{Authorization:await generateHeader(response.data)}}).catch((err)=>{ //hit back on original uri
-        //     console.log(original_uri+"is incorrect")
-        // })
-
         res.status(response.status).send(response.data)
 
 
     }catch(err){
+      logger.error("/:method  -  ",err?.response?.data ? err?.response?.data :err.message)
         res.status(err?.response?.status || 500).send(err?.response?.data ? err?.response?.data :err.message)
     }
 })
@@ -90,14 +76,14 @@ router.get("/cache",async(req,res)=>{
         res.send(response)
     }
     catch(err){
-        console.log(err)
+        logger.error("/cache  -  ",err)
     }
 })
 
 router.post("/ondc/:method", async (req, res) => {
   let body = req.body;
 
-  console.log("message recieved", body)
+  logger.info("/ondc/:method message recieved -  ", body)
 
   if (process.env.ENABLE_SIGNATURE_VALIDATION === "true") {
     const isValid = await verifyHeader(req, process.env.LOOKUP_URL)
@@ -111,8 +97,8 @@ router.post("/ondc/:method", async (req, res) => {
           },
         };
         res.status(200).json(ack);
-        console.log(req.body.context, "recieved context");
-        console.log(ack, "response");
+        logger.info("/ondc/:method  -  ",req.body.context, "recieved context");
+        logger.info("/ondc/:method  -  ",ack, "response");
     } else {
         const nack = {
             message: {
@@ -142,23 +128,22 @@ router.post("/ondc/:method", async (req, res) => {
 router.delete("/cache",(req,res)=>{
     try {
         const transactionId = req.query.transactionid;
-        console.log("83",transactionId)
         const deleted = deleteCache(transactionId);
         if (deleted) {
-            console.log("87",transactionId)
 
             res.send({ message: 'Response data for the transaction ID has been deleted' });
         } else {
             res.send({ message: 'TransactionId not found in cache' });
         }
     } catch (err) {
-        console.log(err);
+        logger.error("/cache  -  ",err);
         res.status(500).send('Internal Server Error');
     }
 })
 
-// JSON mapper
 
+
+// JSON mapper Api
 router.post("/mapper/session", (req, res) => {
   const {
     version,
@@ -181,7 +166,7 @@ router.post("/mapper/session", (req, res) => {
     });
   }
 
-  console.log("body>>>>>", req.body)
+  logger.info("body>>>>> /mapper/session  -  ", req.body)
 
   try {
     const {
@@ -208,12 +193,11 @@ router.post("/mapper/session", (req, res) => {
       additioalFlows: filteredAdditionalFlows
     };
 
-    // console.log("crfeating session", session)
 
     insertSession(session);
     res.send({ sucess: true, data: session });
   } catch (e) {
-    console.log("Error while creating session", e);
+    logger.error("Error while creating session  -  ", e);
     res.status(500).send("Internal Server Error");
   }
 });
@@ -259,7 +243,7 @@ router.post("/mapper/extractPath", (req, res) => {
 
     res.send({ response });
   } catch (e) {
-    console.log("Error while extracting path", e);
+    logger.info("Error while extracting path  -  ", e);
     res.status(400).send({ error: true, data: e });
   }
 });
@@ -358,27 +342,14 @@ router.post("/mapper/:config", async (req, res) => {
     }
     session = {...session, ...payload}
 
-    // const header = {};
-    // header.headers = { ...header.headers, "Content-Type": "text/plain;charset=utf-8" };
-    // const response = await axios.post(
-    //   `http://localhost:5500/${session.protocolCalls[config].type}`,
-    //   JSON.stringify(becknPayload, null, 2),
-    //   header
-    // );
 
-    const CALLBACK_URL = process.env.callbackUrl
-    const STAGING_GATEWAY_URL = "https://staging.gateway.proteantech.in/"
-    const SIGNING_PRIVATE_KEY =
-      "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
-    const BAP_ID = "mobility-staging.ondc.org";
-    const UNIQUE_KEY_ID = "UK-MOBILITY";
     const type = session.protocolCalls[config].type
 
-    becknPayload.context.bap_uri=`${CALLBACK_URL}/ondc`
+    becknPayload.context.bap_uri=`${callbackUrl}/ondc`
     let url ;
 
     if(type == 'search'){
-        url = STAGING_GATEWAY_URL
+        url = GATEWAY_URL
     }else{
         url = becknPayload.context.bpp_uri
     }
@@ -387,16 +358,16 @@ router.post("/mapper/:config", async (req, res) => {
         url=url+"/"
       }
 
-    console.log("becknPayload", JSON.stringify(becknPayload))
+    logger.info("becknPayload /mapper/:config  -  ", JSON.stringify(becknPayload))
 
-    const signedHeader = await createHeader(becknPayload)
-    console.log("SignedHeader", signedHeader)
+    const signedHeader = await generateHeader(becknPayload)
+    logger.info("SignedHeader /mapper/:config  -  ", signedHeader)
 
     const header ={headers:{Authorization: signedHeader}}
 
     const response  =  await axios.post(`${url}${type}`,becknPayload,header)
     
-    console.log("res>>>>>>", response.data)
+    logger.info("res>>>>>> /mapper/:config  -  ", response.data)
 
     session.protocolCalls[config] = {
       ...session.protocolCalls[config],
@@ -420,7 +391,7 @@ router.post("/mapper/:config", async (req, res) => {
     // }
     res.status(200).send({response: response.data, session})
   } catch (e) {
-    console.log("Error while sending request", e);
+    logger.error("Error while sending request  -  ", e);
     return res.status(500).send({data: "Error while sending reques", e});
   }
 });
