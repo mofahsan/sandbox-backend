@@ -3,6 +3,7 @@ const {createAuthorizationHeader, isSignatureValid} = require("ondc-crypto-sdk-n
 const axios = require("axios");
 const {extractBusinessData} = require("./buildPayload")
 const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
+const logger = require("./logger");
 
 function  insertRequest(request,header){
   if(!request?.context?.transaction_id) return
@@ -37,28 +38,6 @@ async function generateHeader(message){
     return myCache.set(transactionId,[],15000)
 }
 
-const createHeaderFromId = async (body) => {
-  console.log("Body", JSON.stringify(body));
-
-  const SIGNING_PRIVATE_KEY =
-    "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
-  const BAP_ID = "mobility-staging.ondc.org";
-  const UNIQUE_KEY_ID = "UK-MOBILITY";
-
-  try {
-    const header = await createAuthorizationHeader({
-      message: body,
-      privateKey: SIGNING_PRIVATE_KEY,
-      bapId: BAP_ID, // Subscriber ID that you get after registering to ONDC Network
-      bapUniqueKeyId: UNIQUE_KEY_ID, // Unique Key Id or uKid that you get after registering to ONDC Network
-    });
-    console.log("header", header);
-
-    return header;
-  } catch (e) {
-    console.log("Error while create headers", e);
-  }
-};
 
 const verifyHeader = async (req, lookup_uri) => {
     const headers = req.headers;
@@ -134,42 +113,38 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
       },
     },
   };
-  console.log("inside handle request for json mapper", response)
+  logger.info("inside handle request for json mapper", response)
   
   // let session = getCache("jm_" + response.context.transaction_id);
   let session = null
 
   const allSession = getCache();
-  console.log("allSessions", allSession);
+  logger.info("allSessions", allSession);
 
   allSession.map((ses) => {
     if (!ses.startsWith("jm_")) return;
 
     const sessionData = getCache(ses);
     if(sessionData.transactionIds.includes(response.context.transaction_id)) {
-      console.log(" got session>>>>")
+      logger.info(" got session>>>>")
       session = sessionData
     }
   });
 
   if (!session) {
-    console.log("No session exists")
+    logger.info("No session exists")
     return 
   }
 
-//   console.log("session", session)
   let config = ""
 
   Object.entries(session.protocolCalls).map(item => {
-    // console.log("item", item)
-    // console.log("response", response.context)
     const [key, value] = item
     if(value.messageId === response.context.message_id) {
         config = key
     }
   })
 
-  // console.log("config>>>>", config)
   if(config === "" && !unsolicited) {
     return
   }
@@ -182,7 +157,6 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
 
   session = {...session, ...updatedSession}
 
-  // console.log("businessPayload", businessPayload);
 
   session.protocolCalls[nextRequest] = {
     ...session.protocolCalls[nextRequest],
@@ -203,6 +177,6 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
 
 
 module.exports = {
-insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession, createHeaderFromId, handleRequestForJsonMapper
+insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession, handleRequestForJsonMapper
 }
 
