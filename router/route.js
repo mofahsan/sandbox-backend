@@ -16,7 +16,6 @@ const {
   handleRequestForJsonMapper
 } = require("../utils/utils");
 const {createBecknObject} = require('../utils/buildPayload')
-const {apiResponse} = require("../utils/response")
 const {extractPath} = require("../utils/buildPayload")
 const {configLoader} = require("../configs/index")
 const logger = require("../utils/logger")
@@ -358,7 +357,7 @@ router.post("/mapper/:config", async (req, res) => {
         url=url+"/"
       }
 
-    logger.info("becknPayload /mapper/:config  -  ", JSON.stringify(becknPayload))
+    logger.info("becknPayload /mapper/:config  -  ", becknPayload)
 
     const signedHeader = await generateHeader(becknPayload)
     logger.info("SignedHeader /mapper/:config  -  ", signedHeader)

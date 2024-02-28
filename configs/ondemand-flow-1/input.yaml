@@ -3,10 +3,14 @@ search:
     key: "startCoordinates"
     type: "text"
     errorText: "Start Coordinates is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "End Coordinates"
     key: "endCoordinates"
     type: "text"
     errorText: "End Coordinates is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Tags"
     key: "paymentTagsSearch"
     type: "multiline"
@@ -18,38 +22,54 @@ search:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment tags is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
 
 select:
   - name: "BPP URI"
     key: "bpp_uri"
     type: "text"
     error: "BPP URI is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "BPP ID"
     key: "bpp_id"
     type: "text"
     error: "BPP ID is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Item id"
     key: "itemId"
     type: "text"
     errorText: "Item id is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Provider Id"
     key: "providerId"
     type: "text"
     errorText: "Provider Id is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
 
 init:
   - name: "Name"
     key: "name"
     type: "text"
     errorText: "Name is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Phone"
     key: "phone"
     type: "text"
     errorText: "Phone is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Collected By"
     key: "collectedBy"
     type: "text"
     errorText: "Collected By is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Status"
     key: "paymentStatus"
     type: "select"
@@ -59,6 +79,8 @@ init:
       - key: "NOT-PAID"
         value: "NOT-PAID"
     errorText: "Please select a field"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Type"
     key: "paymentType"
     type: "select"
@@ -74,18 +96,26 @@ init:
       - key: "ON-ORDER"
         value: "ON-ORDER"
     errorText: "Please select a field"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Bank Code"
     key: "bankCode"
     type: "text"
     errorText: "Bank Code is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Bank Account Number"
     key: "bankAccountNumber"
     type: "text"
     errorText: "Bank Account Number is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Virtual Payment Address"
     key: "virtualPaymentAddress"
     type: "text"
     errorText: "Virtual Payment Address is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Tags"
     key: "paymentTagsInit"
     type: "multiline"
@@ -97,20 +127,28 @@ init:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
 
 confirm:
   - name: "Payment Id"
     key: "paymentId"
     type: "text"
     errorText: "Payment Id is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Status"
     key: "paymentStatusConfirm"
     type: "text"
     errorText: "Payment Status is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Type"
     key: "paymentTypeConfirm"
     type: "text"
     errorText: "Payment Type is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
   - name: "Payment Tags"
     key: "paymentTagsConfirm"
     type: "multiline"
@@ -122,9 +160,13 @@ confirm:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
 
 status:
   - name: "Order Id"
     key: "orderId"
     type: "text"
     errorText: "Order Id is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
