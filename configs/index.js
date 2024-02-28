@@ -2,7 +2,7 @@ const fs = require("fs");
 const yaml = require("yaml");
 const path = require("path");
 const $RefParser = require("@apidevtools/json-schema-ref-parser");
-const logger = require("../utils/logger")
+const logger = require("../utils/logger");
 
 class ConfigLoader {
   constructor() {
@@ -19,7 +19,6 @@ class ConfigLoader {
 
       this.config = schema;
 
-      logger.info("schema", schema);
       return schema;
     } catch (e) {
       throw new Error(e);

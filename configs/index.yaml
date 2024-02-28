@@ -1,18 +1,5 @@
 server:
   port: 80
-  variables:
-    dev:
-      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
-      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
-      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
-      bapId: "mobility-staging.ondc.org"
-      uniqueKeyId: "UK-MOBILITY"
-    prod:
-      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
-      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
-      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
-      bapId: "mobility-staging.ondc.org"
-      uniqueKeyId: "UK-MOBILITY"
 flows:
   - summary: Metro - Station Code Based Flow
     id: metro-flow-1
@@ -55,7 +42,7 @@ flows:
       $ref: ./configs/metro-flow-2/protocolMapping.yaml
     calls:
       $ref: ./configs/metro-flow-2/protocolCalls.yaml
-  - summary: on demand complete flow
+  - summary: On-Demand - Assign driver on on-confirm
     domain: ONDC:TRV10
     id: ondemand-flow-1
     input:
