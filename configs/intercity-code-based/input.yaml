@@ -8,7 +8,7 @@ search_route:
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent
+        BUYER_FINDER_FEES_TYPE: percent-annualized
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
@@ -41,7 +41,17 @@ search_trip:
     extractionPathReplaceWith: formData.bpp_id
     errorText: "End stop is required"
 
-init:
+select:
+  - name: "BPP URI"
+    key: "bpp_uri"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
+    errorText: "BPP URI is required"
+  - name: "BPP ID"
+    key: "bpp_id"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
+    errorText: "BPP ID is required"
   - name: "Item id"
     key: "itemId"
     type: "select"
@@ -60,6 +70,8 @@ init:
     extractionPathReplace: "${bpp_id}"
     extractionPathReplaceWith: formData.bpp_id
     errorText: "Provider id is required"
+
+init:
   - name: "Name"
     key: "name"
     type: "text"
@@ -72,6 +84,10 @@ init:
     key: "phone"
     type: "text"
     errorText: "Phone is required"
+  - name: "Collected By"
+    key: "collectedBy"
+    type: "text"
+    errorText: "Collected By is required"
   - name: "Payment Status"
     key: "paymentStatus"
     type: "select"
@@ -84,7 +100,6 @@ init:
   - name: "Payment Type"
     key: "paymentType"
     type: "select"
-    defaultValue: "PRE-ORDER"
     defaultOptions:
       - key: "PRE-ORDER"
         value: "PRE-ORDER"
@@ -97,12 +112,24 @@ init:
       - key: "ON-ORDER"
         value: "ON-ORDER"
     errorText: "Please select a field"
+  - name: "Bank Code"
+    key: "bankCode"
+    type: "text"
+    errorText: "Bank Code is required"
+  - name: "Bank Account Number"
+    key: "bankAccountNumber"
+    type: "text"
+    errorText: "Bank Account Number is required"
+  - name: "Virtual Payment Address"
+    key: "virtualPaymentAddress"
+    type: "text"
+    errorText: "Virtual Payment Address is required"
   - name: "Payment Tags"
     key: "paymentTagsInit"
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent
+        BUYER_FINDER_FEES_TYPE: percent-annualized
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
@@ -110,33 +137,17 @@ init:
     errorText: "Payment Tags is required"
 
 confirm:
-  - name: "Payment Id"
-    key: "paymentId"
+  - name: "Collected By"
+    key: "collectedByConfirm"
     type: "text"
-    errorText: "Payment Id is required"
+    errorText: "Collected By is required"
   - name: "Payment Status"
     key: "paymentStatusConfirm"
-    type: "select"
-    defaultOptions:y
-      - key: "PAID"
-        value: "PAID"
-      - key: "NOT-PAID"
+    type: "text"
     errorText: "Payment Status is required"
   - name: "Payment Type"
     key: "paymentTypeConfirm"
-    type: "select"
-    defaultValue: "PRE-ORDER"
-    defaultOptions:
-      - key: "PRE-ORDER"
-        value: "PRE-ORDER"
-      - key: "PRE-FULFILLMENT"
-        value: "PRE-FULFILLMENT"
-      - key: "ON-FULFILLMENT"
-        value: "ON-FULFILLMENT"
-      - key: "POST-FULFILLMENT"
-        value: "POST-FULFILLMENT"
-      - key: "ON-ORDER"
-        value: "ON-ORDER"
+    type: "text"
     errorText: "Payment Type is required"
   - name: "Transcation Id"
     key: "paymentTranscationId"
@@ -155,15 +166,11 @@ confirm:
     type: "multiline"
     defaultValue:
       BUYER_FINDER_FEES:
-        BUYER_FINDER_FEES_TYPE: percent
+        BUYER_FINDER_FEES_TYPE: percent-annualized
         BUYER_FINDER_FEES_PERCENTAGE: "1"
       SETTLEMENT_TERMS:
         DELAY_INTEREST: 2.5
         STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
     errorText: "Payment Tags is required"
 
-status:
-  - name: "Order Id"
-    key: "orderId"
-    type: "text"
-    errorText: "Order Id is required"
+

@@ -18,7 +18,7 @@ class ConfigLoader {
 
       this.config = schema;
 
-      console.log("schema", schema);
+      // console.log("schema", JSON.stringify(schema));
       return schema;
     } catch (e) {
       throw new Error(e);

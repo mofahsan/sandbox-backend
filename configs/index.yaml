@@ -18,41 +18,41 @@ flows:
     id: metro-flow-1
     domain: ONDC:TRV11
     input:
-      $ref: ./configs/metro-flow-1/input.yaml
+      $ref: File:///configs/metro-flow-1/input.yaml
     protocol:
-      $ref: ./configs/metro-flow-1/protocolMapping.yaml
+      $ref: File:///configs/metro-flow-1/protocolMapping.yaml
     calls:
-      $ref: ./configs/metro-flow-1/protocolCalls.yaml
-  - summary: metro flow without select call
-    id: metro-flow-2
-    domain: ONDC:TRV11
-    sessionData:
-      collectedBy: BAP
-      bankAccountNumber: "123456789"
-      virtualPaymentAddress: "adasd@okiciic"
-      bankCode: "fj3jf9ij3f02"
-    input:
-      $ref: ./configs/metro-flow-2/input.yaml
-    protocol:
-      $ref: ./configs/metro-flow-2/protocolMapping.yaml
-    calls:
-      $ref: ./configs/metro-flow-2/protocolCalls.yaml
+      $ref: File:///configs/metro-flow-1/protocolCalls.yaml
+  # - summary: metro flow without select call
+  #   id: metro-flow-2
+  #   domain: ONDC:TRV11
+  #   sessionData:
+  #     collectedBy: BAP
+  #     bankAccountNumber: "123456789"
+  #     virtualPaymentAddress: "adasd@okiciic"
+  #     bankCode: "fj3jf9ij3f02"
+  #   input:
+  #     $ref: File:///configs/metro-flow-2/input.yaml
+  #   protocol:
+  #     $ref: File:///configs/metro-flow-2/protocolMapping.yaml
+  #   calls:
+  #     $ref: File:///configs/metro-flow-2/protocolCalls.yaml
   - summary: on demand complete flow
     domain: ONDC:TRV10
     id: ondemand-flow-1
     input:
-      $ref: ./configs/ondemand-flow-1/input.yaml
+      $ref: File:///configs/ondemand-flow-1/input.yaml
     protocol:
-      $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
+      $ref: File:///configs/ondemand-flow-1/protocolMapping.yaml
     calls:
-      $ref: ./configs/ondemand-flow-1/protocolCalls.yaml
-  - summary: Intercity   
+      $ref: File:///configs/ondemand-flow-1/protocolCalls.yaml
+  - summary: intercity-code-based  
     domain: ONDC:TRV12
-    id: 
-     input:
-      $ref: ./configs/intercity/input.yaml
+    id: intercity-code-based
+    input:
+      $ref: File:///configs/intercity-code-based/input.yaml
     protocol:
-      $ref: ./configs/intercity/protocolMapping.yaml
+      $ref: File:///configs/intercity-code-based/protocolMapping.yaml
     calls:
-      $ref: ./configs/intercity/protocolCalls.yaml
+      $ref: File:///configs/intercity-code-based/protocolCalls.yaml
 

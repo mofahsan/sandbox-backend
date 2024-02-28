@@ -202,6 +202,7 @@ router.post("/mapper/session", (req, res) => {
     // console.log("crfeating session", session)
 
     insertSession(session);
+    console.log(JSON.stringify(session));
     res.send({ sucess: true, data: session });
   } catch (e) {
     console.log("Error while creating session", e);
