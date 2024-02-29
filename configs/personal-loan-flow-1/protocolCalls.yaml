@@ -1,0 +1,54 @@
+search:
+  type: "search"
+  executed: false
+  shouldRender: true
+  config: "search"
+  nextRequest: "on_search"
+  preRequest: null
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search
+
+on_search:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search"
+  nextRequest: "personal_info_form"
+  preRequest: "search"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search
+
+personal_info_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "personal_info_form"
+  nextRequest: "select"
+  preRequest: "on_search"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search
+
+select:
+  type: "select"
+  executed: false
+  shouldRender: false
+  config: "select"
+  nextRequest: "on_select"
+  preRequest: "personal_info_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search
+
+on_select:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select"
+  nextRequest: null
+  preRequest: "select"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search

@@ -19,6 +19,7 @@ class ConfigLoader {
 
       this.config = schema;
 
+      // logger.info(">", schema);
       return schema;
     } catch (e) {
       throw new Error(e);
@@ -58,6 +59,14 @@ class ConfigLoader {
       filteredAdditionalFlows,
       filteredsummary,
     };
+  }
+
+  getListOfFlow() {
+    return this.config.flows
+      .map((flow) => {
+        if (flow.shouldDispaly) return { key: flow.summary, value: flow.id };
+      })
+      .filter((flow) => flow);
   }
 }
 

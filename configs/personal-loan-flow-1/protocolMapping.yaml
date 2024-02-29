@@ -1,0 +1,43 @@
+protocol:
+  search:
+    mapping:
+      - beckn_key: context.bap_id
+        value: session.bap_id
+      - beckn_key: context.bap_uri
+        value: session.bap_uri
+      - beckn_key: context.location.country.code
+        value: session.country
+      - beckn_key: context.location.city.code
+        value: session.cityCode
+      - beckn_key: context.transaction_id
+        value: session.transaction_id
+      - beckn_key: context.message_id
+        value: messageId
+      - beckn_key: context.timestamp
+        value: timestamp
+      - beckn_key: context.domain
+        value: session.domain
+      - beckn_key: context.version
+        value: session.version
+      - beckn_key: context.ttl
+        value: session.ttl
+      - beckn_key: context.action
+        value: action
+
+      - beckn_key: message.intent.category.descriptor.code
+        value: data.loanCategaory
+
+      - beckn_key: message.intent.payment.tags
+        value: data.paymentTagsSearch
+        compute: buildTags(data.paymentTagsSearch)
+
+  on_search:
+    mapping:
+      - business_key: "bpp_id"
+        extractionPath: context.bpp_id
+      - business_key: "bpp_uri"
+        extractionPath: context.bpp_uri
+      - business_key: formUrl
+        extractionPath: "message.catalog.providers[].items[]{formUrl : xinput.form.url, id : xinput.form.id}"
+      - business_key: error
+        extractionPath: error

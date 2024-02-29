@@ -1,0 +1,109 @@
+search_route:
+  type: "search"
+  executed: false
+  shouldRender: true
+  config: "search_route"
+  nextRequest: "on_search_route"
+  preRequest: null
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search_route
+
+on_search_route:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search_route"
+  nextRequest: "search_trip"
+  preRequest: "search_route"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search_route
+
+search_trip:
+  type: "search"
+  executed: false
+  shouldRender: false
+  config: "search_trip"
+  nextRequest: "on_search_trip"
+  preRequest: "on_search_route"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search_trip
+
+on_search_trip:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search_trip"
+  nextRequest: "select"
+  preRequest: "search_trip"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search_trip
+
+select:
+  type: "select"
+  executed: false
+  shouldRender: false
+  config: "select"
+  nextRequest: "on_select"
+  preRequest: "on_search_trip"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/select
+
+on_select:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select"
+  nextRequest: "init"
+  preRequest: "select"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_select
+
+init:
+  type: "init"
+  executed: false
+  shouldRender: false
+  config: "init"
+  nextRequest: "on_init"
+  preRequest: "on_select"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/init
+
+on_init:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init"
+  nextRequest: "confirm"
+  preRequest: "init"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_init
+
+confirm:
+  type: "confirm"
+  executed: false
+  shouldRender: false
+  config: "confirm"
+  nextRequest: "on_confirm"
+  preRequest: "confirm"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/confirm
+
+on_confirm:
+  type: "on_confirm"
+  executed: false
+  shouldRender: false
+  config: "on_confirm"
+  nextRequest: "status"
+  preRequest: "confirm"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_confirm

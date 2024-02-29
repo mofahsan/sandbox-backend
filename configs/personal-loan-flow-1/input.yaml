@@ -1,0 +1,40 @@
+search:
+  - name: "Loan Category"
+    key: "loanCategaory"
+    type: "text"
+    errorText: "Vehicle category is required"
+    required: true
+    summary: Loan category for which ticket needs to be booked
+  - name: "Payment Tags"
+    key: "paymentTagsSearch"
+    type: "multiline"
+    defaultValue:
+      BUYER_FINDER_FEES:
+        BUYER_FINDER_FEES_TYPE: percent-annualized
+        BUYER_FINDER_FEES_PERCENTAGE: "1"
+      SETTLEMENT_TERMS:
+        DELAY_INTEREST: 2.5
+        STATIC_TERMS: "https://bap.credit.becknprotocol.io/personal-banking/loans/personal-loan"
+    errorText: "Payment tags is required"
+    required: true
+    summary: Vehicle category for which ticket needs to be booked
+
+personal_info_form:
+  - name: "BPP URI"
+    key: "bpp_uri"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_uri, value: bpp_uri}"
+    errorText: "BPP URI is required"
+    required: true
+    summary: BPP URI is the base url for the seller endpoints
+  - name: "BPP ID"
+    key: "bpp_id"
+    type: "select"
+    extractionPath: "businessPayload[]{key: bpp_id, value: bpp_id}"
+    errorText: "BPP ID is required"
+    required: true
+    summary: BPP ID is the uniqure id of the seller
+  - name: something
+    key: sometihgin
+    type: "text"
+    errorText: "ksaflk"

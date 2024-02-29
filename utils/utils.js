@@ -153,6 +153,10 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
   if(unsolicited) {
     nextRequest = response.context.action
   }
+
+  console.log(">>>", session.protocolCalls)
+  console.log("nextRequest", nextRequest)
+
   const {result: businessPayload, session: updatedSession} = extractBusinessData(nextRequest, response, session, session.protocolCalls[nextRequest].protocol);
 
   session = {...session, ...updatedSession}

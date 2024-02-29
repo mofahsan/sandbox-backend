@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start-dev": "nodemon -r dotenv/config app.js dotenv_config_path=.env.dev dotenv_config_debug=true"
+    "start-dev-mob": "nodemon -r dotenv/config app.js dotenv_config_path=.env.dev.mob dotenv_config_debug=true",
+    "start-dev-fis": "nodemon -r dotenv/config app.js dotenv_config_path=.env.dev.fis dotenv_config_debug=true"
   },
   "author": "",
   "license": "ISC",
