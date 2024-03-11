@@ -26,12 +26,12 @@ personal_info_form:
   executed: false
   shouldRender: false
   config: "personal_info_form"
-  nextRequest: "select_loan"
+  nextRequest: "search_loan"
   preRequest: "on_search"
   isCollapsed: false
 
-select_loan:
-  type: "select"
+search_loan:
+  type: "search"
   target: "NP"
   executed: false
   shouldRender: false
@@ -42,7 +42,7 @@ select_loan:
   protocol:
     $ref: ./protocolMapping.yaml#/protocol/select_loan
 
-on_select_loan:
+on_search_loan:
   type: "on_select"
   executed: false
   shouldRender: false

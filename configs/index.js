@@ -11,8 +11,12 @@ class ConfigLoader {
 
   async init() {
     try {
+      const fileName = this.getYAMLFileNameBasedOnProtocol(
+        process.env.PROTOCOL
+      );
+
       const config = yaml.parse(
-        fs.readFileSync(path.join(__dirname, "index.yaml"), "utf8")
+        fs.readFileSync(path.join(__dirname, fileName), "utf8")
       );
 
       const schema = await $RefParser.dereference(config);
@@ -28,6 +32,15 @@ class ConfigLoader {
 
   getConfig() {
     return this.config;
+  }
+
+  getYAMLFileNameBasedOnProtocol(protocol) {
+    switch (protocol) {
+      case "mobility":
+        return "mob.yaml";
+      case "fis":
+        return "fis.yaml";
+    }
   }
 
   getConfigBasedOnFlow(flowId) {

@@ -6,6 +6,7 @@ flows:
     domain: ONDC:TRV11
     shouldDispaly: true
     sessionData:
+      version: "2.0.0"
       collectedBy: BAP
       bankAccountNumber: "123456789"
       virtualPaymentAddress: "adasd@okiciic"
@@ -34,6 +35,7 @@ flows:
     domain: ONDC:TRV11
     shouldDispaly: true
     sessionData:
+      version: "2.0.0"
       collectedBy: BAP
       bankAccountNumber: "123456789"
       virtualPaymentAddress: "adasd@okiciic"
@@ -48,6 +50,8 @@ flows:
     domain: ONDC:TRV10
     shouldDispaly: true
     id: ondemand-flow-1
+    sessionData:
+      version: "2.0.0"
     input:
       $ref: ./configs/ondemand-flow-1/input.yaml
     protocol:
@@ -58,22 +62,11 @@ flows:
     id: intercity-flow-1
     shouldDispaly: true
     domain: ONDC:TRV12
+    sessionData:
+      version: "2.0.0"
     input:
       $ref: ./configs/intercity-flow-1/input.yaml
     protocol:
       $ref: ./configs/intercity-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/intercity-flow-1/protocolCalls.yaml
-
-      # FIS
-
-  - summary: Personal Loan
-    id: personal-loan-flow-1
-    domain: ONDC:FIS12
-    shouldDispaly: true
-    input:
-      $ref: ./configs/personal-loan-flow-1/input.yaml
-    protocol:
-      $ref: ./configs/personal-loan-flow-1/protocolMapping.yaml
-    calls:
-      $ref: ./configs/personal-loan-flow-1/protocolCalls.yaml

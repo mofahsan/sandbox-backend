@@ -152,11 +152,11 @@ router.delete("/cache", (req, res) => {
 
 // JSON mapper Api
 router.post("/mapper/session", (req, res) => {
-  const { version, country, cityCode, transaction_id, configName } = req.body;
+  const { country, cityCode, transaction_id, configName } = req.body;
 
-  if (!version || !country || !cityCode || !transaction_id || !configName) {
+  if (!country || !cityCode || !transaction_id || !configName) {
     return res.status(400).send({
-      data: "validations failed version || country || cityCode || transaction_id || configName missing",
+      data: "validations failed  country || cityCode || transaction_id || configName missing",
     });
   }
 
@@ -325,6 +325,27 @@ router.post("/mapper/:config", async (req, res) => {
     return res.status(400).send({ message: "No session exists" });
   }
 
+  if (session.protocolCalls[config].type === "form") {
+    session.protocolCalls[config] = {
+      ...session.protocolCalls[config],
+      executed: true,
+      shouldRender: true,
+      businessPayload: payload,
+    };
+    session = { ...session, ...payload };
+
+    const nextRequest = session.protocolCalls[config].nextRequest;
+
+    session.protocolCalls[nextRequest] = {
+      ...session.protocolCalls[nextRequest],
+      shouldRender: true,
+    };
+
+    insertSession(session);
+
+    return res.status(200).send({ session });
+  }
+
   try {
     const { payload: becknPayload, session: updatedSession } =
       createBecknObject(
@@ -371,7 +392,10 @@ router.post("/mapper/:config", async (req, res) => {
 
     const response = await axios.post(`${url}${type}`, becknPayload, header);
 
-    logger.info("res>>>>>> /mapper/:config  -  ", response.data);
+    logger.info(
+      "res>>>>>> /mapper/:config  -  ",
+      JSON.stringify(response.data)
+    );
 
     session.protocolCalls[config] = {
       ...session.protocolCalls[config],
@@ -395,8 +419,13 @@ router.post("/mapper/:config", async (req, res) => {
     // }
     res.status(200).send({ response: response.data, session });
   } catch (e) {
-    logger.error("Error while sending request  -  ", e);
-    return res.status(500).send({ data: "Error while sending reques", e });
+    logger.error(
+      "Error while sending request  -  ",
+      JSON.stringify(e?.response) || e
+    );
+    return res
+      .status(500)
+      .send({ message: "Error while sending request", data: e?.response || e });
   }
 });
 

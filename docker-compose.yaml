@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    restart: always
+
+  ngrock:
+    image: ngrok:latest
+    restart: always

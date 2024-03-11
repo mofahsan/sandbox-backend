@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 const { v4: uuidv4 } = require("uuid");
-const logger = require("./logger")
+const logger = require("./logger");
 
 const getYamlConfig = (configName) => {
   const yamlConfig = fs.readFileSync(
@@ -74,6 +74,8 @@ const createPayload = (config, action, data, session) => {
   const startPoint = "START";
   const endPoint = "END";
   const cancelName = "Ride Cancellation";
+  const successStatus = "SUCCESS";
+  const fulfillmentText = "fulfillment";
   const messageId = uuidv4();
   const paymentId = uuidv4();
   const timestamp = new Date().toISOString();
