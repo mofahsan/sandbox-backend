@@ -42,6 +42,10 @@ protocol:
         value: session.bap_id
       - beckn_key: context.bap_uri
         value: session.bap_uri
+      - beckn_key: context.bpp_id
+        value: data.bpp_id
+      - beckn_key: context.bpp_uri
+        value: data.bpp_uri
       - beckn_key: context.location.country.code
         value: session.country
       - beckn_key: context.location.city.code

@@ -321,6 +321,8 @@ router.post("/mapper/:config", async (req, res) => {
   const config = req.params.config;
   let session = getCache("jm_" + transactionId);
 
+  logger.info("cofig> ", config);
+
   if (!session) {
     return res.status(400).send({ message: "No session exists" });
   }
@@ -372,7 +374,9 @@ router.post("/mapper/:config", async (req, res) => {
     becknPayload.context.bap_uri = `${callbackUrl}/ondc`;
     let url;
 
-    if (type == "search") {
+    console.log("beckn Payload", becknPayload);
+
+    if (session.protocolCalls[config].target === "GATEWAY") {
       url = GATEWAY_URL;
     } else {
       url = becknPayload.context.bpp_uri;
@@ -402,8 +406,6 @@ router.post("/mapper/:config", async (req, res) => {
       becknResponse: response.data,
     };
 
-    // const response = {data: "afsa"}
-
     const nextRequest = session.protocolCalls[config].nextRequest;
 
     session.protocolCalls[nextRequest] = {
@@ -412,11 +414,7 @@ router.post("/mapper/:config", async (req, res) => {
     };
 
     insertSession(session);
-    // // For tesitng
-    // handleRequestForJsonMapper(apiResponse(config, transactionId, becknPayload.context.message_id))
-    // if(config === "confirm") {
-    //   handleRequestForJsonMapper(apiResponse("update", transactionId), true)
-    // }
+
     res.status(200).send({ response: response.data, session });
   } catch (e) {
     logger.error(

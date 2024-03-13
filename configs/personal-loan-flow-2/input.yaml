@@ -68,7 +68,7 @@ personal_info_form:
     required: true
     summary: Provider Id is the uniqure id of the seller
 
-select_loan:
+search_1:
   - name: Submission ID
     key: personalInfoSubmissionId
     type: "text"
@@ -76,7 +76,7 @@ select_loan:
     required: true
     summary: Submission Id revieved after form submission
 
-select_approval:
+search_2:
   - name: "Consent Status"
     key: "consentStatus"
     type: "select"
@@ -87,6 +87,26 @@ select_approval:
     errorText: "Please select a field"
     required: true
     summary: Submission Id revieved after form submission
+
+select:
+  - name: "Item Id"
+    key: "newItemId"
+    type: "select"
+    extractionPath: "businessPayload[].itemId[]{key: id, value: id}"
+    extractionPathReplace: "${bpp_id}"
+    extractionPathReplaceWith: formData.bpp_id
+    errorText: "item Id is required"
+    required: true
+    summary: Provider Id is the uniqure id of the seller
+  - name: "Parent Item Id"
+    key: "parentId"
+    type: "select"
+    extractionPath: "businessPayload[].itemId[]{key: parentID, value: parentID}"
+    extractionPathReplace: "${bpp_id}"
+    extractionPathReplaceWith: formData.bpp_id
+    errorText: "Parent Item Id is required"
+    required: false
+    summary: Provider Id is the uniqure id of the seller
 
 loan_amount_adjust_form:
   - name: Form Url

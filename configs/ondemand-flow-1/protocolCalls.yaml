@@ -1,5 +1,6 @@
 search:
   type: "search"
+  target: "GATEWAY"
   executed: false
   shouldRender: true
   config: "search"

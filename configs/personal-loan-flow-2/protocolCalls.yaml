@@ -23,58 +23,82 @@ on_search:
 
 personal_info_form:
   type: "form"
+  title: "personal_info_form"
   executed: false
   shouldRender: false
   config: "personal_info_form"
-  nextRequest: "search_loan"
+  nextRequest: "search_1"
   preRequest: "on_search"
   isCollapsed: false
 
-search_loan:
+search_1:
   type: "search"
   target: "NP"
   executed: false
   shouldRender: false
-  config: "select_loan"
-  nextRequest: "on_select_loan"
+  config: "search_1"
+  nextRequest: "on_search_1"
   preRequest: "personal_info_form"
   isCollapsed: false
   protocol:
-    $ref: ./protocolMapping.yaml#/protocol/select_loan
+    $ref: ./protocolMapping.yaml#/protocol/search_1
 
-on_search_loan:
-  type: "on_select"
+on_search_1:
+  type: "on_search"
   executed: false
   shouldRender: false
-  config: "on_select_loan"
-  nextRequest: select_approval
-  preRequest: "select_loan"
+  config: "on_search_1"
+  nextRequest: search_2
+  preRequest: "search_1"
   isCollapsed: false
   protocol:
     $ref: ./protocolMapping.yaml#/protocol/on_select_loan
 
-select_approval:
+search_2:
+  type: "search"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "search_2"
+  nextRequest: "on_search_2"
+  preRequest: "on_search_1"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search_2
+
+on_search_2:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search_2"
+  nextRequest: select
+  preRequest: "search_2"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search_2
+
+select:
   type: "select"
   target: "NP"
   executed: false
   shouldRender: false
-  config: "select_approval"
-  nextRequest: "on_select_approval"
-  preRequest: "on_select_loan"
+  config: "select"
+  nextRequest: "on_select"
+  preRequest: "on_search_2"
   isCollapsed: false
   protocol:
-    $ref: ./protocolMapping.yaml#/protocol/select_approval
+    $ref: ./protocolMapping.yaml#/protocol/select
 
-on_select_approval:
+on_select:
   type: "on_select"
   executed: false
   shouldRender: false
-  config: "on_select_approval"
+  config: "on_select"
   nextRequest: loan_amount_adjust_form
-  preRequest: "select_approval"
+  preRequest: "select"
   isCollapsed: false
   protocol:
-    $ref: ./protocolMapping.yaml#/protocol/on_select_approval
+    $ref: ./protocolMapping.yaml#/protocol/on_select
 
 loan_amount_adjust_form:
   type: "form"
@@ -82,7 +106,7 @@ loan_amount_adjust_form:
   shouldRender: false
   config: "loan_amount_adjust_form"
   nextRequest: select_after_amount_adjust
-  preRequest: "on_select_approval"
+  preRequest: "on_select"
   isCollapsed: false
 
 select_after_amount_adjust:

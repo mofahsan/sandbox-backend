@@ -1,5 +1,6 @@
 search_route:
   type: "search"
+  target: "GATEWAY"
   executed: false
   shouldRender: true
   config: "search_route"
@@ -22,6 +23,7 @@ on_search_route:
 
 search_trip:
   type: "search"
+  target: "NP"
   executed: false
   shouldRender: false
   config: "search_trip"
