@@ -1,132 +1,126 @@
-const cache = require("node-cache")
-const {createAuthorizationHeader, isSignatureValid} = require("ondc-crypto-sdk-nodejs")
+const cache = require("node-cache");
+const {
+  createAuthorizationHeader,
+  isSignatureValid,
+} = require("ondc-crypto-sdk-nodejs");
 const axios = require("axios");
-const {extractBusinessData} = require("./buildPayload")
-const myCache = new cache( { stdTTL: 100, checkperiod: 120 } );
+const { extractBusinessData } = require("./buildPayload");
+const myCache = new cache({ stdTTL: 100, checkperiod: 120 });
+const logger = require("./logger");
 
-function  insertRequest(request,header){
-  if(!request?.context?.transaction_id) return
-let response = myCache.get(request.context.transaction_id)||[]
-const order = response.length >= 1 ? response[response.length-1].order+1 : 1
-const date = new Date()
-myCache.set(request.context.transaction_id,[...response,{action: request.context.action,order:order,header:header?header:null,timestamp:date,data:request}],86400)
-return order
+function insertRequest(request, header) {
+  if (!request?.context?.transaction_id) return;
+  let response = myCache.get(request.context.transaction_id) || [];
+  const order =
+    response.length >= 1 ? response[response.length - 1].order + 1 : 1;
+  const date = new Date();
+  myCache.set(
+    request.context.transaction_id,
+    [
+      ...response,
+      {
+        action: request.context.action,
+        order: order,
+        header: header ? header : null,
+        timestamp: date,
+        data: request,
+      },
+    ],
+    86400
+  );
+  return order;
 }
 
-function getCache(key){
-    if(key === undefined || key===""){
-        return myCache.keys()
-    }
-    
-    return myCache.get(key)
-}
-
-async function generateHeader(message){
-    const result =  await createAuthorizationHeader({
-       message: message,
-       privateKey: process.env.PRIVATE_KEY , //SIGNING private key
-       bapId: process.env.BAPID , // Subscriber ID that you get after registering to ONDC Network
-       bapUniqueKeyId: process.env.UNIQUE_KEY, // Unique Key Id or uKid that you get after registering to ONDC Network
-     })
-     
-     return result
-       
-   }
-
-   function deleteCache(transactionId) {
-    return myCache.set(transactionId,[],15000)
-}
-
-const createHeaderFromId = async (body) => {
-  console.log("Body", JSON.stringify(body));
-
-  const SIGNING_PRIVATE_KEY =
-    "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ==";
-  const BAP_ID = "mobility-staging.ondc.org";
-  const UNIQUE_KEY_ID = "UK-MOBILITY";
-
-  try {
-    const header = await createAuthorizationHeader({
-      message: body,
-      privateKey: SIGNING_PRIVATE_KEY,
-      bapId: BAP_ID, // Subscriber ID that you get after registering to ONDC Network
-      bapUniqueKeyId: UNIQUE_KEY_ID, // Unique Key Id or uKid that you get after registering to ONDC Network
-    });
-    console.log("header", header);
-
-    return header;
-  } catch (e) {
-    console.log("Error while create headers", e);
+function getCache(key) {
+  if (key === undefined || key === "") {
+    return myCache.keys();
   }
-};
+
+  return myCache.get(key);
+}
+
+async function generateHeader(message) {
+  const result = await createAuthorizationHeader({
+    message: message,
+    privateKey: process.env.PRIVATE_KEY, //SIGNING private key
+    bapId: process.env.BAPID, // Subscriber ID that you get after registering to ONDC Network
+    bapUniqueKeyId: process.env.UNIQUE_KEY, // Unique Key Id or uKid that you get after registering to ONDC Network
+  });
+
+  return result;
+}
+
+function deleteCache(transactionId) {
+  return myCache.set(transactionId, [], 15000);
+}
 
 const verifyHeader = async (req, lookup_uri) => {
-    const headers = req.headers;
-    const public_key = await getPublicKey(lookup_uri, headers);
-    // logger.info(`Public key retrieved from registry : ${public_key}`);
-    // const public_key = security.publickey;
-    //Validate the request source against the registry
-    const isValidSource = await isSignatureValid({
-      header: headers.authorization, // The Authorisation header sent by other network participants
-      body: req.body,
-      publicKey: public_key,
-    });
-    if (!isValidSource) {
-      return false;
-    }
-    return true;
-  };
+  const headers = req.headers;
+  const public_key = await getPublicKey(lookup_uri, headers);
+  // logger.info(`Public key retrieved from registry : ${public_key}`);
+  // const public_key = security.publickey;
+  //Validate the request source against the registry
+  const isValidSource = await isSignatureValid({
+    header: headers.authorization, // The Authorisation header sent by other network participants
+    body: req.body,
+    publicKey: public_key,
+  });
+  if (!isValidSource) {
+    return false;
+  }
+  return true;
+};
 
 const getPublicKey = async (lookupUri, header) => {
-try {
+  try {
     // let lookupUri = "https://preprod.registry.ondc.org/ondc/lookup";
     const extractSubscriberIdukId = extractSubscriberId(header);
     const subscriberId = extractSubscriberIdukId.subscriberID;
     const ukId = extractSubscriberIdukId.uniquePublicKeyID;
     let publicKey;
     await axios
-    .post(lookupUri, {
+      .post(lookupUri, {
         subscriber_id: subscriberId,
         ukId: ukId,
-    })
-    .then((response) => {
+      })
+      .then((response) => {
         response = response.data;
         publicKey = response[0]?.signing_public_key;
-    });
+      });
 
     return publicKey;
-} catch (error) {
+  } catch (error) {
     console.trace(error);
-}
+  }
 };
 
 const extractSubscriberId = (header) => {
-// Find the Authorization header
-const authorizationHeader = header.authorization;
-const regex = /keyId="([^"]+)"/;
-const matches = regex.exec(authorizationHeader);
-const keyID = matches[1];
-if (keyID) {
+  // Find the Authorization header
+  const authorizationHeader = header.authorization;
+  const regex = /keyId="([^"]+)"/;
+  const matches = regex.exec(authorizationHeader);
+  const keyID = matches[1];
+  if (keyID) {
     // Split the header value using the delimiter '|'
     const parts = keyID.split("|");
 
     // Check if the parts array has at least two elements
     if (parts.length >= 2) {
-    const subscriberID = parts[0];
-    const uniquePublicKeyID = parts[1];
-    // Return an object with both values
-    return { subscriberID, uniquePublicKeyID };
+      const subscriberID = parts[0];
+      const uniquePublicKeyID = parts[1];
+      // Return an object with both values
+      return { subscriberID, uniquePublicKeyID };
     }
-}
-return null; // Subscriber ID not found
+  }
+  return null; // Subscriber ID not found
 };
 
 const insertSession = (session) => {
-   myCache.set("jm_" + session.transaction_id, session, 86400) 
-};   
+  myCache.set("jm_" + session.transaction_id, session, 86400);
+};
 
-const handleRequestForJsonMapper = async (response, unsolicited = false) => {
-  if(!response?.context?.transaction_id) return
+const handleRequestForJsonMapper = async (response) => {
+  if (!response?.context?.transaction_id) return;
   const ack = {
     message: {
       ack: {
@@ -134,63 +128,112 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
       },
     },
   };
-  console.log("inside handle request for json mapper", response)
-  
+  logger.info("inside handle request for json mapper", response);
+
   // let session = getCache("jm_" + response.context.transaction_id);
-  let session = null
+  let session = null;
 
   const allSession = getCache();
-  console.log("allSessions", allSession);
+  logger.info("allSessions", allSession);
 
   allSession.map((ses) => {
     if (!ses.startsWith("jm_")) return;
 
     const sessionData = getCache(ses);
-    if(sessionData.transactionIds.includes(response.context.transaction_id)) {
-      console.log(" got session>>>>")
-      session = sessionData
+    if (sessionData.transactionIds.includes(response.context.transaction_id)) {
+      logger.info(" got session>>>>");
+      session = sessionData;
     }
   });
 
   if (!session) {
-    console.log("No session exists")
-    return 
+    logger.info("No session exists");
+    return;
   }
 
-//   console.log("session", session)
-  let config = ""
+  let config = "";
+  let currentConfig = "";
 
-  Object.entries(session.protocolCalls).map(item => {
-    // console.log("item", item)
-    // console.log("response", response.context)
-    const [key, value] = item
-    if(value.messageId === response.context.message_id) {
-        config = key
+  Object.entries(session.protocolCalls).map((item) => {
+    const [key, value] = item;
+    if (value.messageId === response.context.message_id) {
+      config = key;
     }
-  })
 
-  // console.log("config>>>>", config)
-  if(config === "" && !unsolicited) {
-    return
+    if (value.shouldRender && !value.executed) {
+      currentConfig = value.config;
+    }
+  });
+
+  // unsolicited
+  if (config === "") {
+    logger.info("unsolicited call", response?.context);
+
+    const action = response?.context?.action;
+    if (!session.protocolCalls[action]) {
+      return;
+    }
+    const { result: businessPayload, session: updatedSession } =
+      extractBusinessData(
+        action,
+        response,
+        session,
+        session.protocolCalls[action].protocol
+      );
+
+    session = { ...session, ...updatedSession };
+
+    session.protocolCalls[currentConfig] = {
+      ...session.protocolCalls[currentConfig],
+      unsolicited: {
+        config: action,
+        type: action,
+        executed: true,
+        shouldRender: true,
+        becknPayload: [response],
+        businessPayload: [businessPayload],
+        becknResponse: [ack],
+      },
+    };
+
+    insertSession(session);
+    return;
   }
 
-  let nextRequest = session.protocolCalls[config].nextRequest;
-  if(unsolicited) {
-    nextRequest = response.context.action
+  console.log("got config", config);
+
+  let nextRequest = session.protocolCalls[config]?.nextRequest;
+
+  if (!nextRequest) {
+    null;
   }
-  const {result: businessPayload, session: updatedSession} = extractBusinessData(nextRequest, response, session, session.protocolCalls[nextRequest].protocol);
 
-  session = {...session, ...updatedSession}
+  const { result: businessPayload, session: updatedSession } =
+    extractBusinessData(
+      nextRequest,
+      response,
+      session,
+      session.protocolCalls[nextRequest].protocol
+    );
 
-  // console.log("businessPayload", businessPayload);
+  session = { ...session, ...updatedSession };
 
   session.protocolCalls[nextRequest] = {
     ...session.protocolCalls[nextRequest],
     executed: true,
     shouldRender: true,
-    becknPayload: [...(session.protocolCalls[nextRequest].becknPayload || []),  response],
-    businessPayload: [...(session.protocolCalls[nextRequest].businessPayload || []),  businessPayload],
-    becknResponse:  [...(session.protocolCalls[nextRequest].becknResponse || []),  ack]
+    becknPayload: [
+      ...(session.protocolCalls[nextRequest].becknPayload || []),
+      response,
+    ],
+    businessPayload: [
+      ...(session.protocolCalls[nextRequest].businessPayload || []),
+      businessPayload,
+    ],
+    becknResponse: [
+      ...(session.protocolCalls[nextRequest].becknResponse || []),
+      ack,
+    ],
   };
 
   const thirdRequest = session.protocolCalls[nextRequest].nextRequest;
@@ -198,11 +241,15 @@ const handleRequestForJsonMapper = async (response, unsolicited = false) => {
     session.protocolCalls[thirdRequest].shouldRender = true;
   }
 
-   insertSession(session)
+  insertSession(session);
 };
 
-
 module.exports = {
-insertRequest,getCache,generateHeader,deleteCache, verifyHeader, insertSession, createHeaderFromId, handleRequestForJsonMapper
-}
-
+  insertRequest,
+  getCache,
+  generateHeader,
+  deleteCache,
+  verifyHeader,
+  insertSession,
+  handleRequestForJsonMapper,
+};

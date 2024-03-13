@@ -1,2 +1,5 @@
 node_modules
 .env
+Logs
+.env.dev.mob
+.env.dev.fis

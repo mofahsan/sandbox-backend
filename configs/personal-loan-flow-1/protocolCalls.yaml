@@ -1,0 +1,283 @@
+search:
+  type: "search"
+  target: "GATEWAY"
+  executed: false
+  shouldRender: true
+  config: "search"
+  nextRequest: "on_search"
+  preRequest: null
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/search
+
+on_search:
+  type: "on_search"
+  executed: false
+  shouldRender: false
+  config: "on_search"
+  nextRequest: "personal_info_form"
+  preRequest: "search"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_search
+
+personal_info_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "personal_info_form"
+  nextRequest: "select_loan"
+  preRequest: "on_search"
+  isCollapsed: false
+
+select_loan:
+  type: "select"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "select_loan"
+  nextRequest: "on_select_loan"
+  preRequest: "personal_info_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/select_loan
+
+on_select_loan:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select_loan"
+  nextRequest: select_approval
+  preRequest: "select_loan"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_select_loan
+
+select_approval:
+  type: "select"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "select_approval"
+  nextRequest: "on_select_approval"
+  preRequest: "on_select_loan"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/select_approval
+
+on_select_approval:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select_approval"
+  nextRequest: loan_amount_adjust_form
+  preRequest: "select_approval"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_select_approval
+
+loan_amount_adjust_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "loan_amount_adjust_form"
+  nextRequest: select_after_amount_adjust
+  preRequest: "on_select_approval"
+  isCollapsed: false
+
+select_after_amount_adjust:
+  type: "select"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "select_after_amount_adjust"
+  nextRequest: "on_select_after_amount_adjust"
+  preRequest: "loan_amount_adjust_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/select_after_amount_adjust
+
+on_select_after_amount_adjust:
+  type: "on_select"
+  executed: false
+  shouldRender: false
+  config: "on_select_after_amount_adjust"
+  nextRequest: kyc_form
+  preRequest: "select_after_amount_adjust"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_select_after_amount_adjust
+
+kyc_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "kyc_form"
+  nextRequest: init_kyc
+  preRequest: "on_select_after_amount_adjust"
+  isCollapsed: false
+
+init_kyc:
+  type: "init"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "init_kyc"
+  nextRequest: on_init_kyc
+  preRequest: "kyc_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/init_kyc
+
+on_init_kyc:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init_kyc"
+  nextRequest: account_details_form
+  preRequest: "init_kyc"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_init_kyc
+
+account_details_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "account_details_form"
+  nextRequest: init_personal_loan
+  preRequest: "on_init_kyc"
+  isCollapsed: false
+
+init_personal_loan:
+  type: "init"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "init_personal_loan"
+  nextRequest: on_init_personal_loan
+  preRequest: "account_details_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/init_personal_loan
+
+on_init_personal_loan:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init_personal_loan"
+  nextRequest: e_mandate_details_form
+  preRequest: "init_personal_loan"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_init_personal_loan
+
+e_mandate_details_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "e_mandate_details_form"
+  nextRequest: init_with_account_details
+  preRequest: "on_init_personal_loan"
+  isCollapsed: false
+
+init_with_account_details:
+  type: "init"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "init_with_account_details"
+  nextRequest: on_init_with_account_details
+  preRequest: "e_mandate_details_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/init_with_account_details
+
+on_init_with_account_details:
+  type: "on_init"
+  executed: false
+  shouldRender: false
+  config: "on_init_with_account_details"
+  nextRequest: loan_agreement_form
+  preRequest: "init_with_account_details"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_init_with_account_details
+
+loan_agreement_form:
+  type: "form"
+  executed: false
+  shouldRender: false
+  config: "loan_agreement_form"
+  nextRequest: confirm
+  preRequest: "on_init_with_account_details"
+  isCollapsed: false
+
+confirm:
+  type: "confirm"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "confirm"
+  nextRequest: on_confirm
+  preRequest: "loan_agreement_form"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/confirm
+
+on_confirm:
+  type: "on_confirm"
+  executed: false
+  shouldRender: false
+  config: "on_confirm"
+  nextRequest: update
+  preRequest: "confirm"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_confirm
+
+update:
+  type: "update"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "update"
+  nextRequest: on_update
+  preRequest: "on_confirm"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/update
+
+on_update:
+  type: "on_update"
+  executed: false
+  shouldRender: false
+  config: "on_update"
+  nextRequest: status
+  preRequest: "update"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_update
+
+status:
+  type: "status"
+  target: "NP"
+  executed: false
+  shouldRender: false
+  config: "status"
+  nextRequest: on_status
+  preRequest: "on_update"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/status
+
+on_status:
+  type: "on_status"
+  executed: false
+  shouldRender: false
+  config: "on_status"
+  nextRequest: null
+  preRequest: "status"
+  isCollapsed: false
+  protocol:
+    $ref: ./protocolMapping.yaml#/protocol/on_status

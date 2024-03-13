@@ -24,6 +24,10 @@ protocol:
       - beckn_key: context.action
         value: action
 
+      - beckn_key: message.intent.fulfillment.stops[0].type
+        value: startPoint
+      - beckn_key: message.intent.fulfillment.stops[0].location.descriptor.code
+        value: session.cityCode
       - beckn_key: message.intent.fulfillment.vehicle.category
         value: data.vehicleCategaory || session.vehicleCategaory
       - beckn_key: message.intent.payment.tags
@@ -42,10 +46,6 @@ protocol:
         value: session.bap_id
       - beckn_key: context.bap_uri
         value: session.bap_uri
-      - beckn_key: context.bpp_id
-        value: data.bpp_id
-      - beckn_key: context.bpp_uri
-        value: data.bpp_uri
       - beckn_key: context.location.country.code
         value: session.country
       - beckn_key: context.location.city.code
@@ -161,17 +161,17 @@ protocol:
       - beckn_key: message.order.billing.phone
         value: data.phone
       - beckn_key: message.order.payments[0].collected_by
-        value: session.collectedBy
+        value: data.collectedBy
       - beckn_key: message.order.payments[0].status
         value: data.paymentStatus
       - beckn_key: message.order.payments[0].type
         value: data.paymentType
       - beckn_key: message.order.payments[0].params.bank_code
-        value: session.bankCode
+        value: data.bankCode
       - beckn_key: message.order.payments[0].params.bank_account_number
-        value: session.bankAccountNumber
+        value: data.bankAccountNumber
       - beckn_key: message.order.payments[0].params.virtual_payment_address
-        value: session.virtualPaymentAddress
+        value: data.virtualPaymentAddress
       - beckn_key: message.order.payments[0].tags
         value: data.paymentTagsInit
         compute: buildTags(data.paymentTagsInit)
@@ -222,7 +222,7 @@ protocol:
       - beckn_key: message.order.payments[0].id
         value: data.paymentId
       - beckn_key: message.order.payments[0].collected_by
-        value: session.collectedBy
+        value: data.collectedByConfirm
       - beckn_key: message.order.payments[0].status
         value: data.paymentStatusConfirm
       - beckn_key: message.order.payments[0].type
@@ -236,38 +236,6 @@ protocol:
       - beckn_key: message.order.payments[0].tags
         value: data.paymentTagsConfirm
         compute: buildTags(data.paymentTagsConfirm)
-
-  status:
-    mapping:
-      - beckn_key: context.bap_id
-        value: session.bap_id
-      - beckn_key: context.bap_uri
-        value: session.bap_uri
-      - beckn_key: context.bpp_id
-        value: session.bpp_id
-      - beckn_key: context.bpp_uri
-        value: session.bpp_uri
-      - beckn_key: context.location.country.code
-        value: session.country
-      - beckn_key: context.location.city.code
-        value: session.cityCode
-      - beckn_key: context.transaction_id
-        value: session.currentTransactionId
-      - beckn_key: context.message_id
-        value: messageId
-      - beckn_key: context.timestamp
-        value: timestamp
-      - beckn_key: context.domain
-        value: session.domain
-      - beckn_key: context.version
-        value: session.version
-      - beckn_key: context.ttl
-        value: session.ttl
-      - beckn_key: context.action
-        value: action
-
-      - beckn_key: message.order_id
-        value: data.orderId
 
   on_search_route:
     mapping:
@@ -303,16 +271,9 @@ protocol:
         extractionPath: error
 
   on_init:
-    sessionData:
-      - business_key: paymentID
-        extractionPath: "message.order.payments[]{id: id}"
-      - business_key: totalPrice
-        extractionPath: "message.order.quote.price"
     mapping:
       - business_key: paymentDetails
         extractionPath: "message.order.payments[]{id: id, type: type, status: status}"
-      - business_key: totalPrice
-        extractionPath: "message.order.quote.price"
       - business_key: error
         extractionPath: error
 
@@ -324,12 +285,5 @@ protocol:
         extractionPath: message.order.status
       - business_key: "QR code"
         extractionPath: 'message.order.fulfillments[]{providerId: id}.stops[?(type === "START")]{token: authorization.token, status: authorization.status}'
-      - business_key: error
-        extractionPath: error
-
-  on_status:
-    mapping:
-      - business_key: "status"
-        extractionPath: message.order.status
       - business_key: error
         extractionPath: error

@@ -1,23 +1,12 @@
 server:
   port: 80
-  variables:
-    dev:
-      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
-      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
-      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
-      bapId: "mobility-staging.ondc.org"
-      uniqueKeyId: "UK-MOBILITY"
-    prod:
-      callbackUrl: "https://2273-59-145-217-117.ngrok-free.app"
-      stagingGatewayurl: "https://staging.gateway.proteantech.in/"
-      signingPrivateKey: "Un205TSOdDXTq8E+N/sJOLJ8xalnzZ1EUP1Wcv23sKx70fOfFd4Q2bzfpzPQ+6XZhZv65SH7Pr6YMk8SuFHpxQ=="
-      bapId: "mobility-staging.ondc.org"
-      uniqueKeyId: "UK-MOBILITY"
 flows:
   - summary: Metro - Station Code Based Flow
     id: metro-flow-1
     domain: ONDC:TRV11
+    shouldDispaly: true
     sessionData:
+      version: "2.0.0"
       collectedBy: BAP
       bankAccountNumber: "123456789"
       virtualPaymentAddress: "adasd@okiciic"
@@ -44,7 +33,9 @@ flows:
   - summary: Metro - Station Code Based Flow(without select call)
     id: metro-flow-2
     domain: ONDC:TRV11
+    shouldDispaly: true
     sessionData:
+      version: "2.0.0"
       collectedBy: BAP
       bankAccountNumber: "123456789"
       virtualPaymentAddress: "adasd@okiciic"
@@ -55,12 +46,27 @@ flows:
       $ref: ./configs/metro-flow-2/protocolMapping.yaml
     calls:
       $ref: ./configs/metro-flow-2/protocolCalls.yaml
-  - summary: on demand complete flow
+  - summary: On-Demand - Assign driver on on-confirm
     domain: ONDC:TRV10
+    shouldDispaly: false
     id: ondemand-flow-1
+    sessionData:
+      version: "2.0.0"
     input:
       $ref: ./configs/ondemand-flow-1/input.yaml
     protocol:
       $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
     calls:
       $ref: ./configs/ondemand-flow-1/protocolCalls.yaml
+  - summary: InterCity(Bus) - Station Code Based Flow
+    id: intercity-flow-1
+    shouldDispaly: false
+    domain: ONDC:TRV12
+    sessionData:
+      version: "2.0.0"
+    input:
+      $ref: ./configs/intercity-flow-1/input.yaml
+    protocol:
+      $ref: ./configs/intercity-flow-1/protocolMapping.yaml
+    calls:
+      $ref: ./configs/intercity-flow-1/protocolCalls.yaml

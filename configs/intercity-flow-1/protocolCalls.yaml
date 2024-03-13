@@ -1,6 +1,5 @@
 search_route:
   type: "search"
-  target: "GATEWAY"
   executed: false
   shouldRender: true
   config: "search_route"
@@ -23,7 +22,6 @@ on_search_route:
 
 search_trip:
   type: "search"
-  target: "NP"
   executed: false
   shouldRender: false
   config: "search_trip"
@@ -109,25 +107,3 @@ on_confirm:
   isCollapsed: false
   protocol:
     $ref: ./protocolMapping.yaml#/protocol/on_confirm
-
-status:
-  type: "status"
-  executed: false
-  shouldRender: false
-  config: "status"
-  nextRequest: "on_status"
-  preRequest: "on_confirm"
-  isCollapsed: false
-  protocol:
-    $ref: ./protocolMapping.yaml#/protocol/status
-
-on_status:
-  type: "on_status"
-  executed: false
-  shouldRender: false
-  config: "on_status"
-  nextRequest: null
-  preRequest: "status"
-  isCollapsed: false
-  protocol:
-    $ref: ./protocolMapping.yaml#/protocol/on_status

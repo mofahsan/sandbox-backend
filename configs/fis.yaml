@@ -1,0 +1,33 @@
+server:
+  port: 80
+flows:
+  - summary: Personal Loan [2.0.0]
+    id: personal-loan-flow-1
+    domain: ONDC:FIS12
+    shouldDispaly: true
+    sessionData:
+      version: "2.0.0"
+      collectedBy: BAP
+      paymentCollectedBy: BPP
+      bankAccountNumber: "123456789"
+      virtualPaymentAddress: "adasd@okiciic"
+      bankCode: "fj3jf9ij3f02"
+    input:
+      $ref: ./configs/personal-loan-flow-1/input.yaml
+    calls:
+      $ref: ./configs/personal-loan-flow-1/protocolCalls.yaml
+  - summary: Personal Loan [2.1.0]
+    id: personal-loan-flow-2
+    domain: ONDC:FIS12
+    shouldDispaly: true
+    sessionData:
+      version: "2.1.0"
+      collectedBy: BAP
+      paymentCollectedBy: BPP
+      bankAccountNumber: "123456789"
+      virtualPaymentAddress: "adasd@okiciic"
+      bankCode: "fj3jf9ij3f02"
+    input:
+      $ref: ./configs/personal-loan-flow-2/input.yaml
+    calls:
+      $ref: ./configs/personal-loan-flow-2/protocolCalls.yaml
