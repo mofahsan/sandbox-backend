@@ -14,15 +14,15 @@ server:
       bapId: "mobility-staging.ondc.org"
       uniqueKeyId: "UK-MOBILITY"
 flows:
-  - summary: metro complete flow
-    id: metro-flow-1
-    domain: ONDC:TRV11
-    input:
-      $ref: File:///configs/metro-flow-1/input.yaml
-    protocol:
-      $ref: File:///configs/metro-flow-1/protocolMapping.yaml
-    calls:
-      $ref: File:///configs/metro-flow-1/protocolCalls.yaml
+  # - summary: metro complete flow
+  #   id: metro-flow-1
+  #   domain: ONDC:TRV11
+  #   input:
+  #     $ref: File:///configs/metro-flow-1/input.yaml
+  #   protocol:
+  #     $ref: File:///configs/metro-flow-1/protocolMapping.yaml
+  #   calls:
+  #     $ref: File:///configs/metro-flow-1/protocolCalls.yaml
   # - summary: metro flow without select call
   #   id: metro-flow-2
   #   domain: ONDC:TRV11
