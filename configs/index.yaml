@@ -18,11 +18,11 @@ flows:
     id: metro-flow-1
     domain: ONDC:TRV11
     input:
-      $ref: File:///configs/metro-flow-1/input.yaml
+      $ref: ./configs/metro-flow-1/input.yaml
     protocol:
-      $ref: File:///configs/metro-flow-1/protocolMapping.yaml
+      $ref: ./configs/metro-flow-1/protocolMapping.yaml
     calls:
-      $ref: File:///configs/metro-flow-1/protocolCalls.yaml
+      $ref: ./configs/metro-flow-1/protocolCalls.yaml
   # - summary: metro flow without select call
   #   id: metro-flow-2
   #   domain: ONDC:TRV11
@@ -32,27 +32,27 @@ flows:
   #     virtualPaymentAddress: "adasd@okiciic"
   #     bankCode: "fj3jf9ij3f02"
   #   input:
-  #     $ref: File:///configs/metro-flow-2/input.yaml
+  #     $ref: ./configs/metro-flow-2/input.yaml
   #   protocol:
-  #     $ref: File:///configs/metro-flow-2/protocolMapping.yaml
+  #     $ref: ./configs/metro-flow-2/protocolMapping.yaml
   #   calls:
-  #     $ref: File:///configs/metro-flow-2/protocolCalls.yaml
+  #     $ref: ./configs/metro-flow-2/protocolCalls.yaml
   - summary: on demand complete flow
     domain: ONDC:TRV10
     id: ondemand-flow-1
     input:
-      $ref: File:///configs/ondemand-flow-1/input.yaml
+      $ref: ./configs/ondemand-flow-1/input.yaml
     protocol:
-      $ref: File:///configs/ondemand-flow-1/protocolMapping.yaml
+      $ref: ./configs/ondemand-flow-1/protocolMapping.yaml
     calls:
-      $ref: File:///configs/ondemand-flow-1/protocolCalls.yaml
+      $ref: ./configs/ondemand-flow-1/protocolCalls.yaml
   - summary: intercity-code-based  
     domain: ONDC:TRV12
     id: intercity-code-based
     input:
-      $ref: File:///configs/intercity-code-based/input.yaml
+      $ref: ./configs/intercity-code-based/input.yaml
     protocol:
-      $ref: File:///configs/intercity-code-based/protocolMapping.yaml
+      $ref: ./configs/intercity-code-based/protocolMapping.yaml
     calls:
-      $ref: File:///configs/intercity-code-based/protocolCalls.yaml
+      $ref: ./configs/intercity-code-based/protocolCalls.yaml
 
