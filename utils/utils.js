@@ -1,7 +1,6 @@
 const cache = require("node-cache");
 const {
-  createAuthorizationHeader,
-  isSignatureValid,
+  createAuthorizationHeader,isHeaderValid
 } = require("ondc-crypto-sdk-nodejs");
 const axios = require("axios");
 const { extractBusinessData } = require("./buildPayload");
@@ -41,10 +40,10 @@ function getCache(key) {
 
 async function generateHeader(message) {
   const result = await createAuthorizationHeader({
-    message: message,
+    body: JSON.stringify(message),
     privateKey: process.env.PRIVATE_KEY, //SIGNING private key
-    bapId: process.env.BAPID, // Subscriber ID that you get after registering to ONDC Network
-    bapUniqueKeyId: process.env.UNIQUE_KEY, // Unique Key Id or uKid that you get after registering to ONDC Network
+    subscriberId: process.env.BAPID, // Subscriber ID that you get after registering to ONDC Network
+    subscriberUniqueKeyId: process.env.UNIQUE_KEY, // Unique Key Id or uKid that you get after registering to ONDC Network
   });
 
   return result;
@@ -60,7 +59,7 @@ const verifyHeader = async (req, lookup_uri) => {
   // logger.info(`Public key retrieved from registry : ${public_key}`);
   // const public_key = security.publickey;
   //Validate the request source against the registry
-  const isValidSource = await isSignatureValid({
+  const isValidSource = await isHeaderValid({
     header: headers.authorization, // The Authorisation header sent by other network participants
     body: req.body,
     publicKey: public_key,
@@ -78,10 +77,14 @@ const getPublicKey = async (lookupUri, header) => {
     const subscriberId = extractSubscriberIdukId.subscriberID;
     const ukId = extractSubscriberIdukId.uniquePublicKeyID;
     let publicKey;
-    await axios
-      .post(lookupUri, {
+    const lookup_body =  {
         subscriber_id: subscriberId,
         ukId: ukId,
+      }
+    const lookup_header = await generateHeader(lookup_body)
+    await axios
+      .post(lookupUri,lookup_body,{
+        headers:{Authorization:lookup_header}
       })
       .then((response) => {
         response = response.data;
