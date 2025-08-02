@@ -49,7 +49,7 @@ router.post("/:method", async (req, res) => {
         data: "validations failed bap_uri || transactionid || bppuri missing",
       });
     }
-
+    body.context.bap_id = process.env.BAPID
     body.context.bap_uri = `${callbackUrl}/ondc/`;
     let url;
 
